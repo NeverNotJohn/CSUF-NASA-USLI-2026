@@ -1719,6 +1719,16 @@
 		)
 		(uuid "31886fac-4221-4a8c-a984-5df685397694")
 	)
+	(polyline
+		(pts
+			(xy 284.48 59.69) (xy 284.48 59.69)
+		)
+		(stroke
+			(width 0.5)
+			(type default)
+		)
+		(uuid "3330e46f-6622-4782-8b52-52bbecf925c2")
+	)
 	(wire
 		(pts
 			(xy 181.61 114.3) (xy 180.34 114.3)
@@ -1801,6 +1811,36 @@
 	)
 	(polyline
 		(pts
+			(xy 11.43 101.6) (xy 123.19 101.6)
+		)
+		(stroke
+			(width 0.5)
+			(type default)
+		)
+		(uuid "d36965ae-d15f-4341-bbda-fe40c9e92074")
+	)
+	(polyline
+		(pts
+			(xy 196.85 59.69) (xy 284.48 59.69)
+		)
+		(stroke
+			(width 0.5)
+			(type default)
+		)
+		(uuid "d5858b2e-c889-4348-a74d-b6280266f9bb")
+	)
+	(polyline
+		(pts
+			(xy 196.85 59.69) (xy 201.93 59.69)
+		)
+		(stroke
+			(width 0.5)
+			(type default)
+		)
+		(uuid "e820c4d9-04ce-4429-8320-b49f2c98dec8")
+	)
+	(polyline
+		(pts
 			(xy 123.19 12.7) (xy 123.19 127)
 		)
 		(stroke
@@ -1828,6 +1868,56 @@
 			)
 		)
 		(uuid "5ab5900b-df89-43d0-a0b2-2db28cefb221")
+	)
+	(text "Rover Subsystem"
+		(exclude_from_sim no)
+		(at 37.084 177.292 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "649638e6-5517-4b2f-ac46-25f30f699ff3")
+	)
+	(text "Power Subsystem"
+		(exclude_from_sim no)
+		(at 241.3 57.658 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "6b63bfbf-5578-4b07-b1be-9f4415aac4c2")
+	)
+	(text "Sensor Subsystem"
+		(exclude_from_sim no)
+		(at 69.85 97.79 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "78872674-cef3-426b-8d08-e19d7da01f73")
+	)
+	(text "Leg Subsystem\n"
+		(exclude_from_sim no)
+		(at 37.338 182.372 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "d9e573dd-e57e-40f8-909c-02b110c91553")
+	)
+	(text "UTG Payload\n"
+		(exclude_from_sim no)
+		(at 193.548 189.992 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "dfeefa12-941a-4ce3-8494-45d6b6174fc0")
 	)
 	(global_label "RYLR896_TX"
 		(shape input)
