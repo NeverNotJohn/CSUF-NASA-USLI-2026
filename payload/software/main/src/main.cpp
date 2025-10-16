@@ -18,6 +18,7 @@ void testTask(void *pvParameters)
 
 void setup()
 {
+    Serial.begin(9600);
     // Task Creation
     xTaskCreate(testTask, "Test Task", 1000, NULL, 1, &testTaskHandle);
 
@@ -28,6 +29,8 @@ void loop()
 {
     // Do Stuff
     cout << "I am alive! \n";
+    Serial.printf("Hello World \n");
+    printf("Hello World");
     myFunction(1, 2);
 }
 
