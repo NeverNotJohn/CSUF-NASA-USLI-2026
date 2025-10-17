@@ -302,6 +302,282 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "L298N Concept:12V_Drill"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "D"
+				(at 0.254 9.144 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "12V Drill"
+				(at 3.81 7.366 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "12V_Drill_0_1"
+				(rectangle
+					(start 0 6.35)
+					(end 7.62 -3.81)
+					(stroke
+						(width 0)
+						(type default)
+						(color 0 0 255 1)
+					)
+					(fill
+						(type color)
+						(color 194 194 194 1)
+					)
+				)
+			)
+			(symbol "12V_Drill_1_1"
+				(pin input line
+					(at 10.16 2.54 180)
+					(length 2.54)
+					(name "M1"
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 10.16 0 180)
+					(length 2.54)
+					(name "M2"
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "L298N Concept:L298N"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "L"
+				(at -9.906 7.874 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "L298N DualDC Motor Driver"
+				(at 2.794 6.096 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "L298N_0_1"
+				(rectangle
+					(start 0 5.08)
+					(end 7.62 -5.08)
+					(stroke
+						(width 0)
+						(type default)
+						(color 0 0 255 1)
+					)
+					(fill
+						(type color)
+						(color 194 194 194 1)
+					)
+				)
+			)
+			(symbol "L298N_1_1"
+				(pin output line
+					(at -2.54 1.27 0)
+					(length 2.54)
+					(name "M1"
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin output line
+					(at -2.54 -1.27 0)
+					(length 2.54)
+					(name "M2"
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 3.81 7.62 270)
+					(length 2.54)
+					(name "Vin"
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 3.81 -7.62 90)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 10.16 1.27 180)
+					(length 2.54)
+					(name "Input1"
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin input line
+					(at 10.16 -1.27 180)
+					(length 2.54)
+					(name "Input1"
+						(effects
+							(font
+								(size 0.762 0.762)
+							)
+						)
+					)
+					(number ""
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Teensy 4.1:DEV-16771"
 			(pin_names
 				(offset 1.016)
@@ -2012,6 +2288,16 @@
 			(embedded_fonts no)
 		)
 	)
+	(text "Drill Controller Subsystem"
+		(exclude_from_sim no)
+		(at 263.652 90.424 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "2c68afbd-6dcf-4c82-a71d-dd254185271c")
+	)
 	(text "Main Computing Unit (Teensy 4.1)"
 		(exclude_from_sim no)
 		(at 160.02 122.936 0)
@@ -2122,6 +2408,26 @@
 		)
 		(uuid "3330e46f-6622-4782-8b52-52bbecf925c2")
 	)
+	(polyline
+		(pts
+			(xy 241.3 92.71) (xy 284.48 92.71)
+		)
+		(stroke
+			(width 0.5)
+			(type default)
+		)
+		(uuid "3a8c6faf-ad30-4e11-be98-06c7ce0ab776")
+	)
+	(wire
+		(pts
+			(xy 255.27 76.2) (xy 262.89 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "417970e5-f79c-4721-ad2b-98942334e336")
+	)
 	(wire
 		(pts
 			(xy 181.61 114.3) (xy 180.34 114.3)
@@ -2222,6 +2528,16 @@
 		)
 		(uuid "b526ceff-be52-41ad-b2f4-7e007d845766")
 	)
+	(polyline
+		(pts
+			(xy 241.3 59.69) (xy 241.3 92.71)
+		)
+		(stroke
+			(width 0.5)
+			(type default)
+		)
+		(uuid "bd3b809a-7cd7-4197-aafa-a652c7b4a9ed")
+	)
 	(wire
 		(pts
 			(xy 24.13 40.64) (xy 24.13 39.37)
@@ -2291,6 +2607,16 @@
 			(type default)
 		)
 		(uuid "f31d99df-a85c-45d8-b26b-b93fb9b99e4a")
+	)
+	(wire
+		(pts
+			(xy 255.27 73.66) (xy 262.89 73.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f853a78c-76ed-4b2a-a844-d68533451796")
 	)
 	(wire
 		(pts
@@ -2364,6 +2690,28 @@
 					(size 1.27 1.27)
 				)
 				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "12V"
+		(shape input)
+		(at 269.24 67.31 90)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "55c63e26-01cd-415b-9f69-ca650697f95b")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 269.24 60.8172 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
 				(hide yes)
 			)
 		)
@@ -2452,6 +2800,50 @@
 					(size 1.27 1.27)
 				)
 				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "Input2"
+		(shape input)
+		(at 275.59 76.2 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "db8fdec7-aa55-4af8-91ab-30a9fbd89b9f")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 284.5622 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "Input1"
+		(shape input)
+		(at 275.59 73.66 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "dd56041d-15d4-49d4-93da-65781621886a")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 284.5622 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
 				(hide yes)
 			)
 		)
@@ -2545,6 +2937,73 @@
 		)
 	)
 	(symbol
+		(lib_id "L298N Concept:12V_Drill")
+		(at 245.11 76.2 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "0615c60a-cf8d-48a7-a73c-b3d53978b080")
+		(property "Reference" "D1"
+			(at 245.872 67.056 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "12V Drill"
+			(at 248.92 68.834 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 245.11 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 245.11 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 245.11 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin ""
+			(uuid "10f1fa4b-027b-475f-a3cc-592c083c026b")
+		)
+		(pin ""
+			(uuid "010f03f6-151a-4e9c-a536-c779c5233290")
+		)
+		(instances
+			(project ""
+				(path "/3984840f-3fda-4f5e-b639-4fb709ef7efc"
+					(reference "D1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
 		(at 181.61 114.3 90)
 		(unit 1)
@@ -2612,6 +3071,72 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GND")
+		(at 269.24 82.55 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "4b51b062-30d3-4b68-b080-f39981f3ca41")
+		(property "Reference" "#PWR07"
+			(at 269.24 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 269.24 87.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 269.24 82.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 269.24 82.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 269.24 82.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "7c8d4ef9-d3a6-4dc0-a9e6-ddce20702a5f")
+		)
+		(instances
+			(project ""
+				(path "/3984840f-3fda-4f5e-b639-4fb709ef7efc"
+					(reference "#PWR07")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:+5V")
 		(at 181.61 20.32 270)
 		(unit 1)
@@ -2673,6 +3198,87 @@
 			(project ""
 				(path "/3984840f-3fda-4f5e-b639-4fb709ef7efc"
 					(reference "#PWR01")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "L298N Concept:L298N")
+		(at 265.43 74.93 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "4d7af999-3ea6-41e7-b71d-b737f98ee512")
+		(property "Reference" "L1"
+			(at 255.016 66.802 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "L298N DualDC Motor Driver"
+			(at 255.016 68.834 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 265.43 74.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 265.43 74.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 265.43 74.93 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin ""
+			(uuid "427217bf-7632-4b75-a2ce-5c340c9175fa")
+		)
+		(pin ""
+			(uuid "fafdca84-b007-460e-a613-9900637e2895")
+		)
+		(pin ""
+			(uuid "5ccc95f2-d58e-409c-9326-c319764d2a4c")
+		)
+		(pin ""
+			(uuid "12879e90-b334-4f0d-b2ca-8c8283f17d98")
+		)
+		(pin ""
+			(uuid "5c483e8b-d222-4bf2-99db-cc84bb7952c8")
+		)
+		(pin ""
+			(uuid "e7567915-f8bd-4638-bdb0-b137eec1d59a")
+		)
+		(instances
+			(project ""
+				(path "/3984840f-3fda-4f5e-b639-4fb709ef7efc"
+					(reference "L1")
 					(unit 1)
 				)
 			)
