@@ -3,4 +3,6 @@
   (lib (name "Teensy 4.1")(type "KiCad")(uri "${KIPRJMOD}/symbols/DEV-16771.kicad_sym")(options "")(descr ""))
   (lib (name "GPS6MV2")(type "KiCad")(uri "${KIPRJMOD}/symbols/GPS6MV2.kicad_sym")(options "")(descr ""))
   (lib (name "L298N Concept")(type "KiCad")(uri "${KIPRJMOD}/symbols/L298N Concept.kicad_sym")(options "")(descr ""))
+  (lib (name "MPU650")(type "KiCad")(uri "${KIPRJMOD}/symbols/MPU650.kicad_sym")(options "")(descr ""))
+  (lib (name "MPU6050")(type "KiCad")(uri "${KIPRJMOD}/symbols/MPU6050.kicad_sym")(options "")(descr ""))
 )
