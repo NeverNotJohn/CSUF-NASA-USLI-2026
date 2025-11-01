@@ -9,4 +9,5 @@
   (lib (name "RYLR896")(type "KiCad")(uri "${KIPRJMOD}/symbols/RYLR896.kicad_sym")(options "")(descr ""))
   (lib (name "RS485_to_UART")(type "KiCad")(uri "${KIPRJMOD}/symbols/RS485_to_UART.kicad_sym")(options "")(descr ""))
   (lib (name "Soil_Sensors")(type "KiCad")(uri "${KIPRJMOD}/symbols/Soil_Sensors.kicad_sym")(options "")(descr ""))
+  (lib (name "Generic Devices")(type "KiCad")(uri "${KIPRJMOD}/symbols/Generic Devices.kicad_sym")(options "")(descr ""))
 )
