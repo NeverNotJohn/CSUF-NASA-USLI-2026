@@ -3,7 +3,8 @@
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 #include <defines.h>
-
+#include <TimeLib.h>
+#include <vector>
 Adafruit_MPU6050 mpu;
 
 void initMPU6050()
@@ -38,7 +39,7 @@ Vector3D getAcceleration(){
     acceleration.x = accel.acceleration.x;
     acceleration.y = accel.acceleration.y;
     acceleration.z = accel.acceleration.z;
-    //return acceleration;
+    return acceleration;
 }
 
 Vector3D getAngularAcceleration(){
@@ -48,5 +49,10 @@ Vector3D getAngularAcceleration(){
     angularAcceleration.x = gyro.orientation.x;
     angularAcceleration.y = gyro.orientation.y;
     angularAcceleration.z = gyro.acceleration.z;
-    //return angularAcceleration;
+    return angularAcceleration;
+}
+
+
+Vector3D getOrientation(){
+    
 }

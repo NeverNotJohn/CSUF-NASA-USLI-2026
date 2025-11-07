@@ -25,7 +25,24 @@ void testMPU(void *pvParameters)
 {
     while (true)
     {
-
+        Vector3D accel = getAcceleration();
+        Vector3D angular = getAngularAcceleration();
+        Serial.print("Acceleration - ");
+        Serial.print("x: ");
+        Serial.print(accel.x);
+        Serial.print(" y: ");
+        Serial.print(accel.y);
+        Serial.print(" z: ");
+        Serial.print(accel.z);
+        Serial.print(" (m/s^2) ");
+        Serial.print("Angular Acceleration - ");
+        Serial.print("x: ");
+        Serial.print(angular.x);
+        Serial.print(" y: ");
+        Serial.print(angular.y);
+        Serial.print(" z: ");
+        Serial.print(angular.z);
+        Serial.println(" (rad/s)");
     }
 }
 
