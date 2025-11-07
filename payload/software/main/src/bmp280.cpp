@@ -3,7 +3,7 @@
 #include <Adafruit_BMP280.h>
 
 Adafruit_BMP280 bmp;
-float baselinePressure;
+double baselinePressure;
 void initBMP()
 {
    //Call begin on Wire
@@ -44,7 +44,7 @@ double calculateBaselinePressure()
         delay(500);
     }
     // Return the average in hPa
-    return (pressureSum/10.0)/100,0;
+    return (pressureSum/10.0)/100.0;
 }
 float getBaselinePressure()
 {
