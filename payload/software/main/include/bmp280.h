@@ -22,5 +22,5 @@ float getTemperature();
 // Reads the altitude data using the baseline pressure
 float getRelativeAltitude();
 // Really for debugging
-float getBaselinePressure();
+double getBaselinePressure();
 #endif // BMP280_H
