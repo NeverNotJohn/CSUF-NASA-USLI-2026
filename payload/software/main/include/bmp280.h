@@ -9,18 +9,18 @@
 
 // Initilizes the BMP by finding it on I2C adresses 0x77 & 0x76
 void initBMP();
-//Updates the "baselinePressure" variable
+// Updates the "baselinePressure" variable
 void calibrateBMP();
-//Averages 10 pressure readings and returns a baseline pressure in hPa
-float calculateBaselinePressure();
-//Reads the pressure data in Pa
-float getPressure();
-//Reads the temperature data in celcius
+// Averages 10 pressure readings and returns a baseline pressure in hPa
+double calculateBaselinePressure();
+// Reads the pressure data in Pa
+double getPressure();
+// Reads the temperature data in celcius
 float getTemperature();
-//Reads the Altitude data
+// Reads the Altitude data
 // float getAltitude();
-//Reads the altitude data using the baseline pressure
+// Reads the altitude data using the baseline pressure
 float getRelativeAltitude();
-//Really for debugging
+// Really for debugging
 float getBaselinePressure();
 #endif // BMP280_H

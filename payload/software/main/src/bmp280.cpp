@@ -1,6 +1,5 @@
 #include <bmp280.h>
 #include <Wire.h>
-#include <SPI.h>
 #include <Adafruit_BMP280.h>
 
 Adafruit_BMP280 bmp;
@@ -34,9 +33,9 @@ void calibrateBMP(){
     baselinePressure = calculateBaselinePressure(); // Sets the global variable "baselinePressure" to the returned value of "getBaselinePressure()"
 }
 
-float calculateBaselinePressure()
+double calculateBaselinePressure()
 {
-    float pressureSum = 0;
+    double pressureSum = 0;
     // Take 10 readings, average it out, and return it
     for (int i = 0; i < 10; i++)
     {
@@ -45,7 +44,7 @@ float calculateBaselinePressure()
         delay(500);
     }
     // Return the average in hPa
-    return (float)(pressureSum/10)/100;
+    return (pressureSum/10.0)/100,0;
 }
 float getBaselinePressure()
 {
@@ -56,9 +55,9 @@ float getTemperature()
 {
     return bmp.readTemperature();
 }
-float getPressure()
+double getPressure()
 {
-    return bmp.readPressure();
+    return (double)bmp.readPressure();
 }
 // float getAltitude()
 // {
