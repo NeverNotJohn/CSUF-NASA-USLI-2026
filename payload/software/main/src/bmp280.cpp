@@ -1,72 +1,82 @@
+/*****************************************
+ * 
+ * BMP280 Altimeter Source File
+ * 
+ *****************************************/
+
 #include <bmp280.h>
 #include <Wire.h>
 #include <Adafruit_BMP280.h>
-#include "i2c.h"
+#include <arduino_freertos.h>
+#include <queue.h>
 
-Adafruit_BMP280 bmp;
-double baselinePressure;
+static Adafruit_BMP280 bmp;
+
+/************** DATA VARIABLES **************/
+QueueHandle_t altitudeQueue;
+static double baselinePressure;
+
+// FIXME try and catch
+// Initilizes the BMP by finding it on I2C adresses 0x77 & 0x76
 void initBMP()
 {
-   //Call begin on Wire
+
+    // I2C mutex stuff
+
     Wire.begin(); 
-    Serial.println(F("BMP280 init"));
+    Serial.println("BMP280 init");
 
     unsigned status;
-    //Test addresses 0x77 (default, SDO floating)
     status = bmp.begin(0x77); 
 
     if (!status) {
-        // If 0x77 fails try 0x76 (SDO grounded)
         status = bmp.begin(0x76);
     }
 
     if (!status) {
-        Serial.println(F("Could not find BMP280"));        
-        while (1) { delay(100); } // How does delay work in freeRTOS
+        Serial.println("Could not find BMP280");        
     }
-    calibrateBMP(); // Calibrate the bmp, set the global variable to the average pressure
+
+    calibrateBMP(); 
+
     Serial.print("BMP280 SensorID: 0x");
     Serial.println(bmp.sensorID(),16);
-    Serial.println(F("BMP280 initialized successfully!"));
+    Serial.println("BMP280 initialized successfully!");
 }
 
+// Guess
+double calculateBaselinePressure()
+{
+    double pressureSum = 0;
+
+    for (int i = 0; i < 10; i++)
+    {
+        pressureSum += (double)bmp.readPressure();
+        delay(500);
+    }
+
+    // Return the average in hPa
+    return (pressureSum/10.0)/100.0;
+}
+
+// Updates the "baselinePressure" variable
 void calibrateBMP(){
     baselinePressure = calculateBaselinePressure(); // Sets the global variable "baselinePressure" to the returned value of "getBaselinePressure()"
 }
 
-double calculateBaselinePressure()
-{
-    double pressureSum = 0;
-    // Take 10 readings, average it out, and return it
-    for (int i = 0; i < 10; i++)
-    {
-        pressureSum += getPressure();
-        // Delay for reading stability
-        delay(500);
-    }
-    // Return the average in hPa
-    return (pressureSum/10.0)/100.0;
-}
 double getBaselinePressure()
 {
     return baselinePressure;
 }
 
+// Reads the temperature data in celcius
 float getTemperature()
 {
     return bmp.readTemperature();
 }
-double getPressure()
-{
-    return (double)bmp.readPressure();
-}
-// float getAltitude()
-// {
-//     return bmp.readAltitude();
-// }
-float getRelativeAltitude()
+
+// Reads the altitude data using the baseline pressure
+float getAltitude()
 {
     return bmp.readAltitude(baselinePressure);
 }
-
-
