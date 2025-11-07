@@ -2,6 +2,7 @@
 #include <Wire.h>
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
+#include <defines.h>
 
 Adafruit_MPU6050 mpu;
 
@@ -19,7 +20,7 @@ void initMPU6050()
     }
     if (!status)
     {
-        Serial.println(F("Could not find MPU6050"));
+        Serial.println("Could not find MPU6050");
         while (1)
         {
             delay(100);
@@ -27,37 +28,25 @@ void initMPU6050()
     }
     Serial.println("MPU6050 initialized successfully!");
     mpu.setAccelerometerRange(MPU6050_RANGE_2_G);
-    Serial.print("Accelerometer range set to: ");
-    switch (mpu.getAccelerometerRange())
-    {
-    case MPU6050_RANGE_2_G:
-        Serial.println("+-2G");
-        break;
-    case MPU6050_RANGE_4_G:
-        Serial.println("+-4G");
-        break;
-    case MPU6050_RANGE_8_G:
-        Serial.println("+-8G");
-        break;
-    case MPU6050_RANGE_16_G:
-        Serial.println("+-16G");
-        break;
-    }
     mpu.setGyroRange(MPU6050_RANGE_250_DEG);
-    Serial.print("Gyro range set to: ");
-    switch (mpu.getGyroRange())
-    {
-    case MPU6050_RANGE_250_DEG:
-        Serial.println("+- 250 deg/s");
-        break;
-    case MPU6050_RANGE_500_DEG:
-        Serial.println("+- 500 deg/s");
-        break;
-    case MPU6050_RANGE_1000_DEG:
-        Serial.println("+- 1000 deg/s");
-        break;
-    case MPU6050_RANGE_2000_DEG:
-        Serial.println("+- 2000 deg/s");
-        break;
-    }
+    mpu.setFilterBandwidth(MPU6050_BAND_21_HZ);
+}
+Vector3D getAcceleration(){
+    Vector3D acceleration;
+    sensors_event_t accel, gyro, temp;
+    mpu.getEvent(&accel, &gyro, &temp);
+    acceleration.x = accel.acceleration.x;
+    acceleration.y = accel.acceleration.y;
+    acceleration.z = accel.acceleration.z;
+    //return acceleration;
+}
+
+Vector3D getAngularAcceleration(){
+    Vector3D angularAcceleration;
+    sensors_event_t accel, gyro, temp;
+    mpu.getEvent(&accel, &gyro, &temp);
+    angularAcceleration.x = gyro.orientation.x;
+    angularAcceleration.y = gyro.orientation.y;
+    angularAcceleration.z = gyro.acceleration.z;
+    //return angularAcceleration;
 }
