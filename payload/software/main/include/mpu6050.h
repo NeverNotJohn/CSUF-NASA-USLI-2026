@@ -17,9 +17,7 @@ typedef struct {
 void initMPU6050();
 // Reads acceleration data in m/s^2 from accelerometer
 Vector3D getAcceleration();
-// Reads angular acceleration data in rad/s from gyroscope
-Vector3D getAngularAcceleration();
-// Calculates orientation from a set of angular velocities from start time to now
-Vector3D getOrientation();
+// Reads angular Velocity data in rad/s from gyroscope
+Vector3D getAngularVelocity();
 
 #endif // MPU6050_H

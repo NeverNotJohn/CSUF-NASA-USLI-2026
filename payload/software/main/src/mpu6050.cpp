@@ -42,14 +42,14 @@ Vector3D getAcceleration(){
     return acceleration;
 }
 
-Vector3D getAngularAcceleration(){
-    Vector3D angularAcceleration;
+Vector3D getAngularVelocity(){
+    Vector3D angularVelocity;
     sensors_event_t accel, gyro, temp;
     mpu.getEvent(&accel, &gyro, &temp);
-    angularAcceleration.x = gyro.orientation.x;
-    angularAcceleration.y = gyro.orientation.y;
-    angularAcceleration.z = gyro.acceleration.z;
-    return angularAcceleration;
+    angularVelocity.x = gyro.orientation.x;
+    angularVelocity.y = gyro.orientation.y;
+    angularVelocity.z = gyro.acceleration.z;
+    return angularVelocity;
 }
 
 
