@@ -3,7 +3,7 @@
 #include "motor.h"
 #include "mpu6050.h"
 #include "bmp280.h"
-
+#include <MadgwickAHRS.h>
 using namespace std;
 
 // Globals
@@ -11,6 +11,8 @@ using namespace std;
 TaskHandle_t testTaskHandle = NULL;
 TaskHandle_t bmpTestHandle = NULL;
 TaskHandle_t orientationLoopHandle = NULL;
+SemaphoreHandle_t i2cMutex = NULL;
+Madgwick filter;
 
 void testTask(void *pvParameters)
 {
@@ -81,67 +83,80 @@ void orientationCalculation(Vector3D gyroData, Vector3D accelData, Vector3D& ori
 void orientationLoop(void *pvParameters)
 {
     TickType_t xLastWakeTime = xTaskGetTickCount(); // Get current time in ticks
-    const TickType_t xFrequency = pdMS_TO_TICKS(10); // 100Hz/10MS
-    const double deltaTime = 0.01; // 0.01s = 10ms
+    const TickType_t xFrequency = pdMS_TO_TICKS(10); // 100Hz/10ms
+    const double deltaTime = pdTICKS_TO_MS(xFrequency)/1000.0; // auto converts ticks to seconds for delta time
+    
     Vector3D orientation = {0, 0, 0}; // Init this out side of the loop
     // freeRTOS notated infinite loop 
     for(;;)
     {
-        Vector3D angular = getAngularVelocity();
-        Vector3D acceleration = getAcceleration();
-        orientationCalculation(angular,acceleration,orientation,deltaTime);
+        Vector3D angular = {0, 0, 0};
+        Vector3D acceleration = {0, 0, 0};
+        // orientationCalculation(angular,acceleration,orientation,deltaTime);
         // Convert the orientation into degrees btw
-        Serial.print("Orientation - ");
-        Serial.print("x (Roll): ");
-        Serial.print(orientation.x * 180.0 / PI);
-        Serial.print(" y (Pitch): ");
-        Serial.print(orientation.y * 180.0 / PI);
-        Serial.print(" z (Yaw): ");
-        Serial.println(orientation.z * 180.0 / PI);
+        // Serial.print("Orientation - ");
+        // Serial.print("x (Roll): ");
+        // Serial.print(orientation.x * 180.0 / PI);
+        // Serial.print(" y (Pitch): ");
+        // Serial.print(orientation.y * 180.0 / PI);
+        // Serial.print(" z (Yaw): ");
+        // Serial.println(orientation.z * 180.0 / PI);
+        if(xSemaphoreTake(i2cMutex, portMAX_DELAY) == pdTRUE)
+        {
+            angular = getAngularVelocity();
+            acceleration = getAcceleration();
+            xSemaphoreGive(i2cMutex);
+        }
+        filter.updateIMU(angular.x,angular.y,angular.z,acceleration.x,acceleration.y,acceleration.z);
+
+        float roll = filter.getRoll();
+        float pitch = filter.getPitch();
+        float heading = filter.getYaw();
+        
+        Serial.printf("Roll: %.2f, Pitch: %.2f, Yaw: %.2f\n", 
+            roll,  // Roll
+            pitch,  // Pitch
+            heading); // Yaw
         vTaskDelayUntil(&xLastWakeTime, xFrequency); // Consistently delay this task withouy yielding the CPU
     }
 }
       
 void testBMP(void *pvParameters)
 {
-    while (true)
+    TickType_t xLastWakeTime = xTaskGetTickCount(); // Get current time in ticks
+    const TickType_t xFrequency = pdMS_TO_TICKS(10); // 100Hz/10ms
+    for(;;)
     {
-        Serial.print("Temperature: ");
-        Serial.print(getTemperature());
-        Serial.print(" *C ");
-      
-        Serial.print("Pressure: ");
-        Serial.print(getPressure());
-        Serial.print(" Pa ");
-      
-        Serial.print("Baseline Pressure: ");
-        Serial.print(getBaselinePressure());
-        Serial.print(" hPa ");
+        if(xSemaphoreTake(i2cMutex, portMAX_DELAY) == pdTRUE)
+        {
+            float temp = getTemperature();
+            float pressure = getPressure();
+            float baseline = getBaselinePressure();
+            float altitude = getRelativeAltitude();
+            xSemaphoreGive(i2cMutex);
 
-        // Serial.print("Altitude: ");
-        // Serial.print(getAltitude());
-        // Serial.print(" m");
-
-        Serial.print("Relative Altitude: ");
-        Serial.print(getRelativeAltitude());
-        Serial.println(" m");
+            Serial.printf("Temperature: %f *C, Pressure: %f Pa, Baseline Pressure: %f hPa, Relative Altitude: %f m\n", 
+                temp, pressure, baseline, altitude);
+        }
+        vTaskDelayUntil(&xLastWakeTime, xFrequency);
     }
 }
 
 void setup()
 {
     Serial.begin(9600);
+    i2cMutex = xSemaphoreCreateMutex();
     // Init sensors for tasks
-    // initBMP();
+    initBMP();
     initMPU6050();
+    filter.begin(200);
+    // setBeta was added in by me to test if changing the beta would make it more responsive
+    //filter.setBeta(0.5f); 
     // Task Creation
     // xTaskCreate(testTask, "Test Task", 2048, NULL, 1, &testTaskHandle);
     // xTaskCreate(testMPU, "MPU6050 Test Task", 4096, NULL, 1, &bmpTestHandle);
-    xTaskCreate(orientationLoop, "getOrientation", 4096, NULL, 1, &orientationLoopHandle);
-    initBMP();
-    // Task Creation
-    // xTaskCreate(testTask, "Test Task", 2048, NULL, 1, &testTaskHandle);
     xTaskCreate(testBMP, "BMP280 Test Task", 4096, NULL, 1, &bmpTestHandle);
+    xTaskCreate(orientationLoop, "getOrientation", 4096, NULL, 1, &orientationLoopHandle);
 
     vTaskStartScheduler();
 }
