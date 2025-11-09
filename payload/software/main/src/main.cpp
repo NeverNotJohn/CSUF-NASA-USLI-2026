@@ -2,11 +2,8 @@
 #include "defines.h"
 #include "motor.h"
 #include "mpu6050.h"
-<<<<<<< HEAD
 #include <MadgwickAHRS.h>
-=======
 #include "bmp280.h"
->>>>>>> 3d0db5882d2d64a971ee8167a8e26c445f0a0c00
 
 using namespace std;
 
@@ -97,7 +94,7 @@ void orientationLoop(void *pvParameters)
     {
         Vector3D angular = getAngularVelocity();
         Vector3D acceleration = getAcceleration();
-        orientationCalculation(angular,acceleration,orientation,deltaTime);
+        // orientationCalculation(angular,acceleration,orientation,deltaTime);
         // Convert the orientation into degrees btw
         // Serial.print("Orientation - ");
         // Serial.print("x (Roll): ");
@@ -149,17 +146,15 @@ void setup()
 {
     Serial.begin(9600);
     // Init sensors for tasks
-    // initBMP();
     initMPU6050();
+    initBMP();
     filter.begin(200);
-    filter.setBeta(1.0f);
+    // setBeta was added in by me to test if changing the beta would make it more responsive
+    //filter.setBeta(0.5f); 
     // Task Creation
     // xTaskCreate(testTask, "Test Task", 2048, NULL, 1, &testTaskHandle);
     // xTaskCreate(testMPU, "MPU6050 Test Task", 4096, NULL, 1, &bmpTestHandle);
     xTaskCreate(orientationLoop, "getOrientation", 4096, NULL, 1, &orientationLoopHandle);
-    initBMP();
-    // Task Creation
-    // xTaskCreate(testTask, "Test Task", 2048, NULL, 1, &testTaskHandle);
     xTaskCreate(testBMP, "BMP280 Test Task", 4096, NULL, 1, &bmpTestHandle);
 
     vTaskStartScheduler();
