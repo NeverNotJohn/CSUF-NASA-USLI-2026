@@ -2,7 +2,11 @@
 #include "defines.h"
 #include "motor.h"
 #include "mpu6050.h"
+<<<<<<< HEAD
 #include <MadgwickAHRS.h>
+=======
+#include "bmp280.h"
+>>>>>>> 3d0db5882d2d64a971ee8167a8e26c445f0a0c00
 
 using namespace std;
 
@@ -19,6 +23,7 @@ void testTask(void *pvParameters)
     while (true)
     {
         // printf("I am  a task");
+        // printf("I am a task");
         myFunction(1,2);
         printf("\n");
     }
@@ -88,7 +93,8 @@ void orientationLoop(void *pvParameters)
     Vector3D orientation = {0, 0, 0}; // Init this out side of the loop
     float roll, pitch, heading;
     // freeRTOS notated infinite loop 
-    for(;;){
+    for(;;)
+    {
         Vector3D angular = getAngularVelocity();
         Vector3D acceleration = getAcceleration();
         orientationCalculation(angular,acceleration,orientation,deltaTime);
@@ -112,6 +118,32 @@ void orientationLoop(void *pvParameters)
         vTaskDelayUntil(&xLastWakeTime, xFrequency); // Consistently delay this task withouy yielding the CPU
     }
 }
+      
+void testBMP(void *pvParameters)
+{
+    while (true)
+    {
+        Serial.print("Temperature: ");
+        Serial.print(getTemperature());
+        Serial.print(" *C ");
+      
+        Serial.print("Pressure: ");
+        Serial.print(getPressure());
+        Serial.print(" Pa ");
+      
+        Serial.print("Baseline Pressure: ");
+        Serial.print(getBaselinePressure());
+        Serial.print(" hPa ");
+
+        // Serial.print("Altitude: ");
+        // Serial.print(getAltitude());
+        // Serial.print(" m");
+
+        Serial.print("Relative Altitude: ");
+        Serial.print(getRelativeAltitude());
+        Serial.println(" m");
+    }
+}
 
 void setup()
 {
@@ -125,6 +157,10 @@ void setup()
     // xTaskCreate(testTask, "Test Task", 2048, NULL, 1, &testTaskHandle);
     // xTaskCreate(testMPU, "MPU6050 Test Task", 4096, NULL, 1, &bmpTestHandle);
     xTaskCreate(orientationLoop, "getOrientation", 4096, NULL, 1, &orientationLoopHandle);
+    initBMP();
+    // Task Creation
+    // xTaskCreate(testTask, "Test Task", 2048, NULL, 1, &testTaskHandle);
+    xTaskCreate(testBMP, "BMP280 Test Task", 4096, NULL, 1, &bmpTestHandle);
 
     vTaskStartScheduler();
 }
