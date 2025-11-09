@@ -2,6 +2,7 @@
 #include "defines.h"
 #include "motor.h"
 #include "mpu6050.h"
+#include <MadgwickAHRS.h>
 
 using namespace std;
 
@@ -10,6 +11,8 @@ using namespace std;
 TaskHandle_t testTaskHandle = NULL;
 TaskHandle_t bmpTestHandle = NULL;
 TaskHandle_t orientationLoopHandle = NULL;
+
+Madgwick filter;
 
 void testTask(void *pvParameters)
 {
@@ -79,22 +82,33 @@ void orientationCalculation(Vector3D gyroData, Vector3D accelData, Vector3D& ori
 void orientationLoop(void *pvParameters)
 {
     TickType_t xLastWakeTime = xTaskGetTickCount(); // Get current time in ticks
-    const TickType_t xFrequency = pdMS_TO_TICKS(10); // 100Hz/10MS
-    const double deltaTime = 0.01; // 0.01s = 10ms
+    const TickType_t xFrequency = pdMS_TO_TICKS(5); // 200Hz/5MS
+    const double deltaTime = pdTICKS_TO_MS(xFrequency)/1000.0; // auto converts ticks to seconds for delta time
+    
     Vector3D orientation = {0, 0, 0}; // Init this out side of the loop
+    float roll, pitch, heading;
     // freeRTOS notated infinite loop 
     for(;;){
         Vector3D angular = getAngularVelocity();
         Vector3D acceleration = getAcceleration();
         orientationCalculation(angular,acceleration,orientation,deltaTime);
         // Convert the orientation into degrees btw
-        Serial.print("Orientation - ");
-        Serial.print("x (Roll): ");
-        Serial.print(orientation.x * 180.0 / PI);
-        Serial.print(" y (Pitch): ");
-        Serial.print(orientation.y * 180.0 / PI);
-        Serial.print(" z (Yaw): ");
-        Serial.println(orientation.z * 180.0 / PI);
+        // Serial.print("Orientation - ");
+        // Serial.print("x (Roll): ");
+        // Serial.print(orientation.x * 180.0 / PI);
+        // Serial.print(" y (Pitch): ");
+        // Serial.print(orientation.y * 180.0 / PI);
+        // Serial.print(" z (Yaw): ");
+        // Serial.println(orientation.z * 180.0 / PI);
+        filter.updateIMU(angular.x,angular.y,angular.z,acceleration.x,acceleration.y,acceleration.z);
+
+        roll = filter.getRoll();
+        pitch = filter.getPitch();
+        heading = filter.getYaw();
+        Serial.printf("%.2f,%.2f,%.2f\n", 
+            roll,  // Roll
+            pitch,  // Pitch
+            heading); // Yaw
         vTaskDelayUntil(&xLastWakeTime, xFrequency); // Consistently delay this task withouy yielding the CPU
     }
 }
@@ -105,6 +119,8 @@ void setup()
     // Init sensors for tasks
     // initBMP();
     initMPU6050();
+    filter.begin(200);
+    filter.setBeta(1.0f);
     // Task Creation
     // xTaskCreate(testTask, "Test Task", 2048, NULL, 1, &testTaskHandle);
     // xTaskCreate(testMPU, "MPU6050 Test Task", 4096, NULL, 1, &bmpTestHandle);
