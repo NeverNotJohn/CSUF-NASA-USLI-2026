@@ -46,7 +46,7 @@ double calculateBaselinePressure()
     // Return the average in hPa
     return (pressureSum/10.0)/100.0;
 }
-float getBaselinePressure()
+double getBaselinePressure()
 {
     return baselinePressure;
 }
