@@ -5,7 +5,6 @@
  *****************************************/
 #ifndef MPU6050_H
 #define MPU6050_H
-#include <vector>
 //Define a reusable Vector that has 3 doubles
 typedef struct {
     double x;

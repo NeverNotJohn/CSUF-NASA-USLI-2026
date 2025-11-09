@@ -64,7 +64,7 @@ void orientationCalculation(Vector3D gyroData, Vector3D accelData, Vector3D& ori
     orientation.x += gyroData.x * deltaTime; // Roll 
     orientation.y += gyroData.y * deltaTime; // Pitch
     orientation.z += gyroData.z * deltaTime; // Yaw
-    
+
     // Calculate roll and pitch from the accelerometer
     float accelRoll = atan2(accelData.y, accelData.z);
     float accelPitch = atan2(-accelData.x, sqrt(accelData.y * accelData.y + accelData.z * accelData.z));
@@ -78,11 +78,11 @@ void orientationCalculation(Vector3D gyroData, Vector3D accelData, Vector3D& ori
 
 void orientationLoop(void *pvParameters)
 {
-    // freeRTOS notated infinite loop 
     TickType_t xLastWakeTime = xTaskGetTickCount(); // Get current time in ticks
     const TickType_t xFrequency = pdMS_TO_TICKS(10); // 100Hz/10MS
     const double deltaTime = 0.01; // 0.01s = 10ms
     Vector3D orientation = {0, 0, 0}; // Init this out side of the loop
+    // freeRTOS notated infinite loop 
     for(;;){
         Vector3D angular = getAngularVelocity();
         Vector3D acceleration = getAcceleration();
@@ -95,7 +95,6 @@ void orientationLoop(void *pvParameters)
         Serial.print(orientation.y * 180.0 / PI);
         Serial.print(" z (Yaw): ");
         Serial.println(orientation.z * 180.0 / PI);
-
         vTaskDelayUntil(&xLastWakeTime, xFrequency); // Consistently delay this task withouy yielding the CPU
     }
 }

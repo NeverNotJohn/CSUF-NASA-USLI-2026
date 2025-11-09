@@ -3,8 +3,6 @@
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 #include <defines.h>
-#include <TimeLib.h>
-#include <vector>
 Adafruit_MPU6050 mpu;
 
 void initMPU6050()
