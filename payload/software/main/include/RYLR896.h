@@ -1,6 +1,6 @@
 /*****************************************
  * 
- * MPU6050 IMU Header File
+ * RYLR896 LoRa Transceiver Header File
  * 
  *****************************************/
 #ifndef RYLR896_H
