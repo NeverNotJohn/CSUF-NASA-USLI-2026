@@ -30,6 +30,8 @@ void beep(int numBeeps, double onInterval_ms, double offInterval_ms)
     }
 }
 
+
+
 /************** THREADS **************/
 // Sanity Check
 void blinkyTask(void *pvParameters)
@@ -46,6 +48,8 @@ void blinkyTask(void *pvParameters)
         vTaskDelay(xDelay);
     }
 }
+
+
 
 void setup()
 {
