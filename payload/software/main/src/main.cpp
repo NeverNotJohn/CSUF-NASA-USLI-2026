@@ -15,6 +15,9 @@ TaskHandle_t blinkyHandle = NULL;
 // Beeps
 void beep(int numBeeps, double onInterval_ms, double offInterval_ms)
 {
+
+    if (!ANNOY_CYAN) return;
+
     const TickType_t offInterval = offInterval_ms / portTICK_PERIOD_MS; 
     const TickType_t onInterval = onInterval_ms / portTICK_PERIOD_MS; 
 
