@@ -3,6 +3,7 @@
 #include "motor.h"
 #include "mpu6050.h"
 #include "bmp280.h"
+#include "RYLR896.h"
 
 using namespace arduino;
 
@@ -62,6 +63,7 @@ void setup()
 
     // DEVICE INIT
     // initMPU6050();
+    // initRYLR896();
 
     // TASK CREATION
     //xTaskCreate(testBMP, "BMP280 Test Task", 4096, NULL, 1, &bmpTestHandle);
