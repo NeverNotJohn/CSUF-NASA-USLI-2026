@@ -27,6 +27,7 @@ void blinkyTask(void *pvParameters)
     for (;;)
     {
         digitalWrite(LED_OUTPUT_PIN, ledStatus);
+        // digitalWrite(BUZZ_PIN, ledStatus);
         ledStatus = !ledStatus;
         vTaskDelay(xDelay);
     }
