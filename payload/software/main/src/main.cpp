@@ -4,6 +4,8 @@
 #include "mpu6050.h"
 #include "bmp280.h"
 #include "RYLR896.h"
+#include "NEO6M.h"
+
 
 using namespace arduino;
 
@@ -50,8 +52,6 @@ void blinkyTask(void *pvParameters)
     }
 }
 
-
-
 void setup()
 {
     printf("Program Started!");
@@ -63,7 +63,8 @@ void setup()
 
     // DEVICE INIT
     // initMPU6050();
-    initRYLR896();
+    // initRYLR896();
+    initNEO6M();
 
     // TASK CREATION
     //xTaskCreate(testBMP, "BMP280 Test Task", 4096, NULL, 1, &bmpTestHandle);
