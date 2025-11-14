@@ -12,9 +12,20 @@ TaskHandle_t blinkyHandle = NULL;
 
 
 /************** HELPER FUNCTIONS **************/
-void beep(int numBeeps, double interval)
+
+// Beeps
+void beep(int numBeeps, double onInterval_ms, double offInterval_ms)
 {
-    printf("Hello World");
+    const TickType_t offInterval = offInterval_ms / portTICK_PERIOD_MS; 
+    const TickType_t onInterval = onInterval_ms / portTICK_PERIOD_MS; 
+
+    for (int i = 0; i < numBeeps; i++)
+    {
+        digitalWrite(BUZZ_PIN, 1);
+        vTaskDelay(onInterval);
+        digitalWrite(BUZZ_PIN, 0);
+        vTaskDelay(offInterval);
+    }
 }
 
 /************** THREADS **************/
@@ -27,7 +38,7 @@ void blinkyTask(void *pvParameters)
     for (;;)
     {
         digitalWrite(LED_OUTPUT_PIN, ledStatus);
-        // digitalWrite(BUZZ_PIN, ledStatus);
+        beep(1, 100, 0);
         ledStatus = !ledStatus;
         vTaskDelay(xDelay);
     }
