@@ -38,8 +38,11 @@ static bool testRYLR896()
 
         // Read from Serial Monitor and send to LoRa module
         while (Serial.available()) {
-            RYLR896_SERIAL.write(Serial.read());
+            char c = Serial.read();
+            Serial.write(c);
+            RYLR896_SERIAL.write(c);
         }
+        delay(100);
     }
 }
 
@@ -48,7 +51,7 @@ static bool testRYLR896()
 void initRYLR896()
 {
     RYLR896_SERIAL.begin(RYLR896_BAUD_RATE);
-    delay(500);         // Wait a bit to init... blocking statement
+    delay(1000);         // Wait a bit to init... blocking statement
 
     // Debug
     testRYLR896();
