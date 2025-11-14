@@ -12,7 +12,6 @@ TaskHandle_t blinkyHandle = NULL;
 
 
 /************** HELPER FUNCTIONS **************/
-
 // Beeps
 void beep(int numBeeps, double onInterval_ms, double offInterval_ms)
 {
@@ -29,6 +28,7 @@ void beep(int numBeeps, double onInterval_ms, double offInterval_ms)
 }
 
 /************** THREADS **************/
+// Sanity Check
 void blinkyTask(void *pvParameters)
 {
     // Block for 1000 ms
