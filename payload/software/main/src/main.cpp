@@ -4,6 +4,7 @@
 #include "mpu6050.h"
 #include "bmp280.h"
 #include "RYLR896.h"
+#include "timeUSLI.h"
 
 using namespace arduino;
 
@@ -55,6 +56,7 @@ void blinkyTask(void *pvParameters)
 void setup()
 {
     printf("Program Started!");
+    delay(3000);
 
     // PIN ASSIGNMENT
     Serial.begin(USB_BAUD_RATE);
@@ -62,9 +64,14 @@ void setup()
     pinMode(BUZZ_PIN, OUTPUT);
 
     // DEVICE INIT
+    // FIXME add timeouts
     // initMPU6050();
     // initRYLR896();
-
+    setSyncProvider(getTeensyTime);
+    // timeSetup(2025, 11, 14, 10, 49, 20);
+    Serial.printf("Setup Finished! Time: %04d-%02d-%02d %02d:%02d:%02d\n",
+                  year(), month(), day(), hour(), minute(), second());
+                  
     // TASK CREATION
     //xTaskCreate(testBMP, "BMP280 Test Task", 4096, NULL, 1, &bmpTestHandle);
     xTaskCreate(blinkyTask, "Blinky Task", 4096, NULL, 1, &blinkyHandle);
