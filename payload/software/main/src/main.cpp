@@ -3,6 +3,7 @@
 #include "motor.h"
 #include "mpu6050.h"
 #include "bmp280.h"
+#include "i2c.h"
 
 using namespace arduino;
 

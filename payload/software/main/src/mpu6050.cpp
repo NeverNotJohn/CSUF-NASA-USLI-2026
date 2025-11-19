@@ -3,6 +3,7 @@
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 #include <defines.h>
+#include "i2c.h"
 Adafruit_MPU6050 mpu;
 
 void initMPU6050()
