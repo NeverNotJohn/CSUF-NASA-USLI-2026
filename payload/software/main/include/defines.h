@@ -29,8 +29,9 @@
 
 typedef struct {
     uint32_t index;
-    uint32_t missionTime;
-    const char* dateTime;
+    uint8_t hour;
+    uint8_t min;
+    uint8_t sec;
     float altitude;
     float latitude;
     float longitude;

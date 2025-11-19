@@ -15,6 +15,13 @@ TaskHandle_t blinkyHandle = NULL;
 uint32_t n = 0;
 DMAMEM DataPacket dataBuffer[DATA_BUFFER_SIZE];
 
+/************** MUTEXES **************/
+// FIXME put in separate files
+SemaphoreHandle_t bmp280Mutex;
+SemaphoreHandle_t neo6mMutex;
+SemaphoreHandle_t mpu6050Mutex;
+SemaphoreHandle_t soilMutex;
+
 /************** HELPER FUNCTIONS **************/
 // Beeps
 void beep(int numBeeps, double onInterval_ms, double offInterval_ms)
@@ -53,11 +60,51 @@ void blinkyTask(void *pvParameters)
     }
 }
 
-// Does all the Sensing Logic
-// Put in separate file?
+// FIXME Put in separate file?
+// Reads data and yeets into memory
 void sensorThread(void *pvParamters)
 {
-    
+    DataPacket currentData;
+
+    // Index and time
+    currentData.index = n++;
+    currentData.hour = 0;
+    currentData.min = 0;
+    currentData.sec = 0;
+
+    // Get Altitude
+    if (xSemaphoreTake(bmp280Mutex, portMAX_DELAY) == pdTRUE)
+    {
+        currentData.altitude = 0;
+        xSemaphoreGive(bmp280Mutex);
+    }
+
+    // Get GPS Coords
+    if (xSemaphoreTake(neo6mMutex, portMAX_DELAY) == pdTRUE)
+    {
+        currentData.latitude = 0;
+        currentData.longitude = 0;
+        xSemaphoreGive(neo6mMutex);
+    }
+
+    // Get Orientation
+    if (xSemaphoreTake(mpu6050Mutex, portMAX_DELAY) == pdTRUE)
+    {
+        currentData.roll = 0;
+        currentData.pitch = 0;
+        currentData.yaw = 0;
+        xSemaphoreGive(mpu6050Mutex);
+    }
+
+    // Get Soil Sensors
+    if (xSemaphoreTake(soilMutex, portMAX_DELAY) == pdTRUE)
+    {
+        currentData.pH = 0;
+        currentData.EC = 0;
+        xSemaphoreGive(soilMutex);
+    }
+
+    // Log Data onto RAM
 }
 
 
@@ -70,6 +117,8 @@ void setup()
     Serial.begin(USB_BAUD_RATE);
     pinMode(LED_OUTPUT_PIN, OUTPUT);
     pinMode(BUZZ_PIN, OUTPUT);
+
+    // MUTEX INIT
 
     // DEVICE INIT
     // initMPU6050();
