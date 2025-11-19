@@ -11,7 +11,7 @@
 /************** EXTERNAL FUNCTIONS **************/
 void initBMP();
 void calibrateBMP();
-float getTemperature();
-float getAltitude();
+float getTemperature_C();
+float getAltitude_ft();
 
 #endif // BMP280_H
