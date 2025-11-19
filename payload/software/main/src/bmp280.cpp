@@ -1,6 +1,7 @@
 #include <bmp280.h>
 #include <Wire.h>
 #include <Adafruit_BMP280.h>
+#include "i2c.h"
 
 Adafruit_BMP280 bmp;
 double baselinePressure;
