@@ -4,6 +4,8 @@
 
 #include <Arduino.h>
 #include <iostream>
+#include <stdint.h>
+#include <stdlib.h>
 
 /************** FLAGS **************/
 #define ANNOY_CYAN          0
@@ -16,12 +18,27 @@
 
 /************** SETTINGS **************/
 #define USB_BAUD_RATE       9600
+#define DATA_BUFFER_SIZE    10416
 
-// typedefs & structs
+/************** TYPEDEFS **************/
 // typedef struct {
 //     double x;
 //     double y;
 //     double z;
 // } Vector3D;
+
+typedef struct {
+    uint32_t index;
+    uint32_t missionTime;
+    const char* dateTime;
+    float altitude;
+    float latitude;
+    float longitude;
+    float roll;
+    float pitch;
+    float yaw;
+    float pH;
+    float EC;
+} DataPacket;
 
 #endif // DEFINES_H

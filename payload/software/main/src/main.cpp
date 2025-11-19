@@ -3,13 +3,17 @@
 #include "motor.h"
 #include "mpu6050.h"
 #include "bmp280.h"
+#include <stdint.h>
+#include <stdlib.h>
 
 using namespace arduino;
 
 /************** TASK HANDLES **************/
 TaskHandle_t blinkyHandle = NULL;
 
-
+/************** GLOBAL VARS **************/
+uint32_t n = 0;
+DMAMEM DataPacket dataBuffer[DATA_BUFFER_SIZE];
 
 /************** HELPER FUNCTIONS **************/
 // Beeps
@@ -47,6 +51,13 @@ void blinkyTask(void *pvParameters)
         ledStatus = !ledStatus;
         vTaskDelay(xDelay);
     }
+}
+
+// Does all the Sensing Logic
+// Put in separate file?
+void sensorThread(void *pvParamters)
+{
+    
 }
 
 
