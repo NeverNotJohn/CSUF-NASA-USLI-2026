@@ -60,7 +60,7 @@ void debugTask(void *pvParameters)
         Serial.printf("Altitude: %.2f ft \n", getAltitude_ft());
         vTaskDelay(xDelay);
     }
-}
+};
 
 
 
