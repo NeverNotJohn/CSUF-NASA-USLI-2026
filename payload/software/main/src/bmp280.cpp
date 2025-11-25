@@ -31,7 +31,7 @@ void initBMP()
         Adafruit_BMP280::MODE_NORMAL,
         Adafruit_BMP280::SAMPLING_X2,                              // Temp          
         Adafruit_BMP280::SAMPLING_X16,                             // Pressure
-        Adafruit_BMP280::FILTER_X2,
+        Adafruit_BMP280::FILTER_OFF,
         Adafruit_BMP280::STANDBY_MS_1
     );
 

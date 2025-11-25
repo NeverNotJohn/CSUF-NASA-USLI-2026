@@ -13,10 +13,9 @@
 
 /************** EXTERNAL FUNCTIONS **************/
 void initNEO6M();
-bool encodeGPS();
 float getLongitude();
 float getLatitude();
 void getGPSTimeString();
 float getSats();
-
+bool encodeGPS();
 #endif // NEO6M_H

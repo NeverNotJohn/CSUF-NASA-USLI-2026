@@ -4,6 +4,7 @@
 #include "mpu6050.h"
 #include "bmp280.h"
 #include "i2c.h"
+#include "neo6m.h"
 
 using namespace arduino;
 
@@ -55,9 +56,19 @@ void blinkyTask(void *pvParameters)
 void debugTask(void *pvParameters)
 {
     const TickType_t xDelay = 500 / portTICK_PERIOD_MS;
+
+    float longitude = 0;
+    float latitude = 0;
+
     for (;;)
     {
-        Serial.printf("Altitude: %.2f ft \n", getAltitude_ft());
+        if (encodeGPS())
+        {
+            longitude =  getLongitude();
+            latitude = getLatitude();
+        }
+        Serial.printf("Alt: %.2f ft, Long/Lat: (%.8f, %.8f), Time: \n", 
+                      getAltitude_ft(), longitude, latitude);
         vTaskDelay(xDelay);
     }
 };
@@ -79,6 +90,7 @@ void setup()
 
     // DEVICE INIT
     initBMP();
+    initNEO6M();
     // initMPU6050();
 
     // TASK CREATION
