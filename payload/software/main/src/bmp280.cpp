@@ -23,7 +23,8 @@ void initBMP()
     // Setup
     statusFlag = bmp.begin(0x77); 
     if (!statusFlag) statusFlag = bmp.begin(0x76);
-    if (!statusFlag) Serial.println("Could not find BMP280");        
+    if (!statusFlag) Serial.println("Could not find BMP280");      
+
 
     // Set Settings
     bmp.setSampling(
@@ -34,10 +35,10 @@ void initBMP()
         Adafruit_BMP280::STANDBY_MS_1
     );
 
+    closeI2C();
+
     // Calibrate
     calibrateBMP(); 
-
-    closeI2C();
 
     Serial.print("BMP280 SensorID: 0x");
     Serial.println(bmp.sensorID(),16);
@@ -49,11 +50,15 @@ double calculateBaselinePressure_hPa()
 {
     double pressureSum = 0;
 
+    openI2C();
+
     for (int i = 0; i < 10; i++)
     {
         pressureSum += (double)bmp.readPressure();
         delay(500);
     }
+
+    closeI2C();
 
     // Return the average in hPa
     return (pressureSum/10.0)/100.0;
@@ -72,11 +77,26 @@ double getBaselinePressure()
 // Reads the temperature data in celcius
 float getTemperature_C()
 {
+    float val = -676767.0;
+    if (openI2C())
+    {
+        val = bmp.readTemperature();
+        closeI2C();
+    }
+
+    return val;
     return bmp.readTemperature();
 }
 
 // Reads the altitude data using the baseline pressure
 float getAltitude_ft()
 {
-    return bmp.readAltitude(baselinePressure);
+    float val = -676767.0;
+    if (openI2C())
+    {
+        val = bmp.readAltitude(baselinePressure) * 3.28084;
+        closeI2C();
+    }
+
+    return val;
 }
