@@ -8,16 +8,18 @@
 #include "defines.h"
 #include <TinyGPS++.h>
 
-
-
+/************** STATIC VARS **************/
 TinyGPSPlus gps;
-using namespace std;
-void initNEO6M(){
-    NEO6M_SERIAL.begin(9600);
+
+/************** FUNCTIONS **************/
+void initNEO6M()
+{
+    NEO6M_SERIAL.begin(NEO6M_BAUD_RATE);
     Serial.print("neo6m data should be spittin");
 }
 
-bool encodeGPS(){
+bool encodeGPS()
+{
     bool updated = false;
     if (NEO6M_SERIAL.available() > 0) {
         char c = NEO6M_SERIAL.read();
@@ -28,19 +30,23 @@ bool encodeGPS(){
     return updated;
 }
 
-float getLongitude(){
+float getLongitude()
+{
     return gps.location.lng();
 }
 
-float getLatitude(){
+float getLatitude()
+{
     return gps.location.lat();
 }
 
-float getSats(){
+float getSats()
+{
     return gps.satellites.value();
 }
 
-void getGPSTimeString(){
+void getGPSTimeString()
+{
     char buffer[9];
     sprintf(buffer, "%02d:%02d:%02d", gps.time.hour(), gps.time.minute(), gps.time.second());
     Serial.print(buffer);
