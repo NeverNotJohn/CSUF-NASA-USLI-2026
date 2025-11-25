@@ -7,17 +7,20 @@
 #include "neo6m.h"
 #include "defines.h"
 #include <TinyGPS++.h>
+
+
+
 TinyGPSPlus gps;
 using namespace std;
 void initNEO6M(){
-    Serial1.begin(9600);
+    NEO6M_SERIAL.begin(9600);
     Serial.print("neo6m data should be spittin");
 }
 
 bool encodeGPS(){
     bool updated = false;
-    if (Serial1.available() > 0) {
-        char c = Serial1.read();
+    if (NEO6M_SERIAL.available() > 0) {
+        char c = NEO6M_SERIAL.read();
         if (gps.encode(c)) {
             updated = true;
         }
