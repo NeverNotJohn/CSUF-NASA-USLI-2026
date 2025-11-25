@@ -16,8 +16,8 @@ static SemaphoreHandle_t i2cMutex;
 // Initializes the i2cMutex
 void initI2C()
 {
-    i2cMutex = xSemaphoreCreateBinary();
-    Serial.printf("I2C Initialized!");
+    i2cMutex = xSemaphoreCreateMutex();
+    Serial.printf("I2C Initialized! \n");
 }
 
 // Take the Semaphore Mutex

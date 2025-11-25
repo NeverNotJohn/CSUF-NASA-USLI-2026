@@ -9,6 +9,7 @@ using namespace arduino;
 
 /************** TASK HANDLES **************/
 TaskHandle_t blinkyHandle = NULL;
+TaskHandle_t debugHandle = NULL;
 
 
 
@@ -50,23 +51,39 @@ void blinkyTask(void *pvParameters)
     }
 }
 
+// Use this for Debug Testing
+void debugTask(void *pvParameters)
+{
+    const TickType_t xDelay = 500 / portTICK_PERIOD_MS;
+    for (;;)
+    {
+        Serial.printf("Altitude: %.2f ft \n", getAltitude_ft());
+        vTaskDelay(xDelay);
+    }
+}
+
 
 
 void setup()
 {
     printf("Program Started!");
+    delay(3000);
 
     // PIN ASSIGNMENT
     Serial.begin(USB_BAUD_RATE);
     pinMode(LED_OUTPUT_PIN, OUTPUT);
     pinMode(BUZZ_PIN, OUTPUT);
 
+    // I/O INIT
+    initI2C();
+
     // DEVICE INIT
+    initBMP();
     // initMPU6050();
 
     // TASK CREATION
-    //xTaskCreate(testBMP, "BMP280 Test Task", 4096, NULL, 1, &bmpTestHandle);
     xTaskCreate(blinkyTask, "Blinky Task", 4096, NULL, 1, &blinkyHandle);
+    xTaskCreate(debugTask, "Debug Task", 4096, NULL, 1, &debugHandle);
 }
 
 void loop()
