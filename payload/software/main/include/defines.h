@@ -7,9 +7,16 @@
 
 /************** FLAGS **************/
 #define ANNOY_CYAN          1
-#define TRIGGER_FT          3 // 30
+ 
+// Preflight
+#define TRIGGER_FT          3       // 30
+
+// Inflight
 #define FLIGHT_TIMEOUT_S    900
 #define GROUND_COUNTER_MAX  250
+
+// Postflight
+#define POST_FLIGHT_TIME_S  60      // 900 = 15 minutes
 
 /************** PINS **************/
 #define LED_OUTPUT_PIN      30

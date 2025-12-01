@@ -88,12 +88,18 @@ void mainTask(void *pvParameters)
 {
     beep(3, 100, 50);
     currentState = PRE_FLIGHT;
+    int preFlightCounter = 0;
 
     // Preflight
-    while (getAltitude_ft() < TRIGGER_FT)
+    while (preFlightCounter < 10)
     {
 
         // Look for calibration sequence
+
+        if (getAltitude_ft() > TRIGGER_FT)
+            preFlightCounter++;
+        else
+            preFlightCounter = 0;
 
         vTaskDelay(pdMS_TO_TICKS(100));
     }
@@ -114,6 +120,8 @@ void mainTask(void *pvParameters)
     {
         if (getAltitude_ft() < TRIGGER_FT) 
             groundCounter++;
+        else
+            groundCounter = 0;
 
         vTaskDelay(pdMS_TO_TICKS(100));
     }
@@ -128,7 +136,7 @@ void mainTask(void *pvParameters)
 
     // Post flight
     // Cool Rover Stuff
-    while ((Teensy3Clock.get() - touchDownTime_s) < 60)      // 900 seconds = 15 mins
+    while ((Teensy3Clock.get() - touchDownTime_s) < POST_FLIGHT_TIME_S)
     {
         // Do Rover Stuff
         vTaskDelay(pdMS_TO_TICKS(100));
