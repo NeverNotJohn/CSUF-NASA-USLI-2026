@@ -3,14 +3,13 @@
 #include "motor.h"
 #include "mpu6050.h"
 #include "bmp280.h"
-#include "i2c.h"
-#include "neo6m.h"
+#include "RYLR896.h"
+#include "timeUSLI.h"
 
 using namespace arduino;
 
 /************** TASK HANDLES **************/
 TaskHandle_t blinkyHandle = NULL;
-TaskHandle_t debugHandle = NULL;
 
 
 
@@ -52,27 +51,6 @@ void blinkyTask(void *pvParameters)
     }
 }
 
-// Use this for Debug Testing
-void debugTask(void *pvParameters)
-{
-    const TickType_t xDelay = 500 / portTICK_PERIOD_MS;
-
-    float longitude = 0;
-    float latitude = 0;
-
-    for (;;)
-    {
-        if (encodeGPS())
-        {
-            longitude =  getLongitude();
-            latitude = getLatitude();
-        }
-        Serial.printf("Alt: %.2f ft, Long/Lat: (%.8f, %.8f), Time: \n", 
-                      getAltitude_ft(), longitude, latitude);
-        vTaskDelay(xDelay);
-    }
-};
-
 
 
 void setup()
@@ -85,17 +63,18 @@ void setup()
     pinMode(LED_OUTPUT_PIN, OUTPUT);
     pinMode(BUZZ_PIN, OUTPUT);
 
-    // I/O INIT
-    initI2C();
-
     // DEVICE INIT
-    initBMP();
-    initNEO6M();
+    // FIXME add timeouts
     // initMPU6050();
-
+    // initRYLR896();
+    setSyncProvider(getTeensyTime);
+    //timeSetup();
+    Serial.printf("Setup Finished! Time: %04d-%02d-%02d %02d:%02d:%02d\n",
+                  year(), month(), day(), hour(), minute(), second());
+                  
     // TASK CREATION
+    //xTaskCreate(testBMP, "BMP280 Test Task", 4096, NULL, 1, &bmpTestHandle);
     xTaskCreate(blinkyTask, "Blinky Task", 4096, NULL, 1, &blinkyHandle);
-    xTaskCreate(debugTask, "Debug Task", 4096, NULL, 1, &debugHandle);
 }
 
 void loop()
