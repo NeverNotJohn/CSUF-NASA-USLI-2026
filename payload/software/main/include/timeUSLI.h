@@ -18,6 +18,6 @@
 
 /******** FUNCTIONS ********/
 time_t getTeensyTime();
-void timeSetup(int year, int month, int day, int hour, int minute, int second);
+void timeSetup();
 
 #endif // timeUSLI_h

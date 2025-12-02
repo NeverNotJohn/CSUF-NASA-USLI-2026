@@ -68,7 +68,7 @@ void setup()
     // initMPU6050();
     // initRYLR896();
     setSyncProvider(getTeensyTime);
-    // timeSetup(2025, 11, 14, 10, 49, 20);
+    //timeSetup();
     Serial.printf("Setup Finished! Time: %04d-%02d-%02d %02d:%02d:%02d\n",
                   year(), month(), day(), hour(), minute(), second());
                   
