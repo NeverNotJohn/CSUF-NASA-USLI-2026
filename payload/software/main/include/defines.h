@@ -6,7 +6,7 @@
 #include <iostream>
 
 /************** FLAGS **************/
-#define ANNOY_CYAN          0
+#define ANNOY_CYAN          1
 
 
 /************** PINS **************/

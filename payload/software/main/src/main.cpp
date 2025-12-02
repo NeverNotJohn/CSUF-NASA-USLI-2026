@@ -5,12 +5,13 @@
 #include "bmp280.h"
 #include "i2c.h"
 #include "neo6m.h"
+#include "timeUSLI.h"
 
 using namespace arduino;
 
 /************** TASK HANDLES **************/
 TaskHandle_t blinkyHandle = NULL;
-TaskHandle_t debugHandle = NULL;
+TaskHandle_t loggerHandle = NULL;
 
 
 
@@ -53,7 +54,7 @@ void blinkyTask(void *pvParameters)
 }
 
 // Use this for Debug Testing
-void debugTask(void *pvParameters)
+void loggerTask(void *pvParameters)
 {
     const TickType_t xDelay = 500 / portTICK_PERIOD_MS;
 
@@ -67,8 +68,8 @@ void debugTask(void *pvParameters)
             longitude =  getLongitude();
             latitude = getLatitude();
         }
-        Serial.printf("Alt: %.2f ft, Long/Lat: (%.8f, %.8f), Time: \n", 
-                      getAltitude_ft(), longitude, latitude);
+        Serial.printf("Alt: %.2f ft, Long/Lat: (%.8f, %.8f), Time: (%i:%i:%i) \n", 
+                      getAltitude_ft(), longitude, latitude, hour(), minute(), second());
         vTaskDelay(xDelay);
     }
 };
@@ -91,11 +92,14 @@ void setup()
     // DEVICE INIT
     initBMP();
     initNEO6M();
+    setSyncProvider(getTeensyTime);
     // initMPU6050();
+    Serial.printf("Init Finished! Time: %04d-%02d-%02d %02d:%02d:%02d\n",
+                  year(), month(), day(), hour(), minute(), second());
 
     // TASK CREATION
     xTaskCreate(blinkyTask, "Blinky Task", 4096, NULL, 1, &blinkyHandle);
-    xTaskCreate(debugTask, "Debug Task", 4096, NULL, 1, &debugHandle);
+    xTaskCreate(loggerTask, "Debug Task", 4096, NULL, 1, &loggerHandle);
 }
 
 void loop()
