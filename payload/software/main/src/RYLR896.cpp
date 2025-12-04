@@ -6,44 +6,46 @@
 
 #include "RYLR896.h"
 #include "defines.h"
+#include "arduino_freertos.h"
+
+/******** VARIABLES ********/
+// Do I wanna add a mutex?
+//      Yes because Main will also transmit data 
+// Remove Serial Use within Task?
+//      Nah make new header for serial port 
+
 
 /******** STATIC FUNCTIONS ********/
-
-// NOT THREAD SAFE (yet)
 // 1 = success, 0 = failure
-static bool sendCommand(String cmd, String expectedReply)
+static bool sendCommand(String cmd, String expectedReply, int delay_ms)
 {
     String cmdTemp = cmd + "\r\n";
+    String reply = "";
+
     RYLR896_SERIAL.print(cmdTemp);
-    delay(50);          // Wait a bit to send
+    vTaskDelay(delay_ms);                                               // Wait a bit for reply
 
-    while (Serial1.available())
+    while (RYLR896_SERIAL.available())
     {
-        char c = RYLR896_SERIAL.read();
-        Serial.printf("%c\n", c);
+        reply = RYLR896_SERIAL.readStringUntil('\n');
+        reply.replace("\n", "");
+        reply.replace("\r", "");
     }
 
-    return false;
-}
+    // Debug
+    //Serial.print(reply);
+    //Serial.printf("\n");
 
-static bool testRYLR896()
-{
-    Serial.println("Hello World!");
-    for (;;)
+    if (reply == expectedReply) 
     {
-        // put your main code here, to run repeatedly:
-        while (RYLR896_SERIAL.available()) {
-            Serial.write(RYLR896_SERIAL.read());
-        }
-
-        // Read from Serial Monitor and send to LoRa module
-        while (Serial.available()) {
-            char c = Serial.read();
-            Serial.write(c);
-            RYLR896_SERIAL.write(c);
-        }
-        delay(100);
+        return 1;
     }
+    else 
+    {
+        Serial.printf("RYLR896 Failed Command at \"%s\" \n", cmd.c_str());
+        return 0;
+    }
+        
 }
 
 /******** EXTERNAL FUNCTIONS ********/
@@ -51,14 +53,30 @@ static bool testRYLR896()
 void initRYLR896()
 {
     RYLR896_SERIAL.begin(RYLR896_BAUD_RATE);
-    delay(1000);         // Wait a bit to init... blocking statement
 
-    // Debug
-    testRYLR896();
-}
+    sendCommand("AT+ADDRESS=12", "+OK", 500);
+    sendCommand("AT+NETWORKID=4", "+OK", 500);
+    sendCommand("AT+BAND=901000000", "+OK", 500);
+    sendCommand("AT+PARAMETER=12,4,1,7", "+OK", 500);
+
+    vTaskDelay(1000);                                               // RYLR896 Needs time to setup
+
+    // Clear Input Buffer
+    while (RYLR896_SERIAL.available())            
+        RYLR896_SERIAL.read(); 
+}       
 
 // Send data via RYLR896, 1 if success, 0 if fail
-bool txRYLR896(const char* data)
+bool txRYLR896(String data)
 {
-    // Lorem Ipsum
+    // Send to Address 1
+    char buf[128];
+    snprintf(buf, sizeof(buf), "AT+SEND=1,%i,%s", data.length(), data.c_str());
+    String out = buf;
+
+    // Debug
+    Serial.printf("Sending Message: ");
+    Serial.println(out);
+
+    return sendCommand(out, "+OK", 3000);
 }         

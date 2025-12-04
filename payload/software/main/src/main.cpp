@@ -9,7 +9,7 @@ using namespace arduino;
 
 /************** TASK HANDLES **************/
 TaskHandle_t blinkyHandle = NULL;
-
+TaskHandle_t transmissionHandle = NULL;
 
 
 /************** HELPER FUNCTIONS **************/
@@ -50,11 +50,23 @@ void blinkyTask(void *pvParameters)
     }
 }
 
+void transmissionTask(void *pvParameters)
+{
+    // Setup
+    initRYLR896();
+    Serial.printf("RYLR896 Setup! \n");
 
+    for (;;)
+    {
+        txRYLR896("12 30 48 200.00 300.1 500.24 298.19");
+        vTaskDelay(3000);
+    }
+}
 
 void setup()
 {
     printf("Program Started!");
+    delay(3000);
 
     // PIN ASSIGNMENT
     Serial.begin(USB_BAUD_RATE);
@@ -63,11 +75,11 @@ void setup()
 
     // DEVICE INIT
     // initMPU6050();
-    initRYLR896();
 
     // TASK CREATION
     //xTaskCreate(testBMP, "BMP280 Test Task", 4096, NULL, 1, &bmpTestHandle);
     xTaskCreate(blinkyTask, "Blinky Task", 4096, NULL, 1, &blinkyHandle);
+    xTaskCreate(transmissionTask, "Transmission Task", 8192, NULL, 1, &transmissionHandle);
 }
 
 void loop()
