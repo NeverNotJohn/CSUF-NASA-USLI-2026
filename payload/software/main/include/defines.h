@@ -10,7 +10,7 @@
 
 
 /************** PINS **************/
-#define LED_OUTPUT_PIN      25
+#define LED_OUTPUT_PIN      30
 #define BUZZ_PIN            31 
 #define LED_INTERNAL_PIN    13
 
