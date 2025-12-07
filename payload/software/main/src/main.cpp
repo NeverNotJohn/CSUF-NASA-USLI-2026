@@ -3,6 +3,7 @@
 #include "motor.h"
 #include "mpu6050.h"
 #include "bmp280.h"
+#include "RYLR896.h"
 #include "i2c.h"
 #include "neo6m.h"
 #include <time.h>
