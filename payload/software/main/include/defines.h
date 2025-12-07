@@ -18,6 +18,20 @@
 #define USB_BAUD_RATE       9600
 
 // typedefs & structs
+
+typedef struct {
+    float n;
+    float hour;
+    float min;
+    float sec;
+    float altitude_ft;
+    float lng;
+    float lat;
+    float roll;
+    float pitch;
+    float yaw;
+} DataPacket;
+
 // typedef struct {
 //     double x;
 //     double y;
