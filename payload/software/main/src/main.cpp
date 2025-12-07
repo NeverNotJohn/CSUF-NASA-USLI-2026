@@ -3,61 +3,108 @@
 #include "motor.h"
 #include "mpu6050.h"
 #include "bmp280.h"
-#include "sdfs.h"
-#include "SD.h"
-#include <vector>
+#include "i2c.h"
+#include "neo6m.h"
+#include "timeUSLI.h"
 
-using namespace std;
+using namespace arduino;
 
-// Globals
-// FIXME put somewhere else
-TaskHandle_t testTaskHandle = NULL;
-TaskHandle_t bmpTestHandle = NULL;
-TaskHandle_t orientationLoopHandle = NULL;
+/************** TASK HANDLES **************/
+TaskHandle_t blinkyHandle = NULL;
+TaskHandle_t loggerHandle = NULL;
 
 
-void sdTask(void *parameter) {
-    const char* filePath = (char*)parameter;
-    createFile(filePath);
-    const std::vector<DataPacket> dataArray = {
-        {0, 12, 1, 1, 57.1, 11.0, 11.0, 11.0, 0.12, 0.125},
-        {1, 12, 1, 2, 57.1, 11.0, 11.0, 11.0, 0.12, 0.125},
-        {2, 12, 1, 2, 57.1, 11.0, 11.0, 11.0, 0.12, 0.125}
-    };
-    writeData(filePath,dataArray);
-    vTaskDelete(NULL);
+
+/************** HELPER FUNCTIONS **************/
+// Beeps
+void beep(int numBeeps, double onInterval_ms, double offInterval_ms)
+{
+
+    if (!ANNOY_CYAN) return;
+
+    const TickType_t offInterval = offInterval_ms / portTICK_PERIOD_MS; 
+    const TickType_t onInterval = onInterval_ms / portTICK_PERIOD_MS; 
+
+    for (int i = 0; i < numBeeps; i++)
+    {
+        digitalWrite(BUZZ_PIN, 1);
+        vTaskDelay(onInterval);
+        digitalWrite(BUZZ_PIN, 0);
+        vTaskDelay(offInterval);
+    }
 }
+
+
+
+/************** THREADS **************/
+// Sanity Check
+void blinkyTask(void *pvParameters)
+{
+    // Block for 1000 ms
+    const TickType_t xDelay = 1000 / portTICK_PERIOD_MS; 
+    bool ledStatus = 0;
+
+    for (;;)
+    {
+        digitalWrite(LED_OUTPUT_PIN, ledStatus);
+        beep(1, 100, 0);
+        ledStatus = !ledStatus;
+        vTaskDelay(xDelay);
+    }
+}
+
+// Use this for Debug Testing
+void loggerTask(void *pvParameters)
+{
+    const TickType_t xDelay = 500 / portTICK_PERIOD_MS;
+
+    float longitude = 0;
+    float latitude = 0;
+
+    for (;;)
+    {
+        if (encodeGPS())
+        {
+            longitude =  getLongitude();
+            latitude = getLatitude();
+        }
+        Serial.printf("Alt: %.2f ft, Long/Lat: (%.8f, %.8f), Time: (%i:%i:%i) \n", 
+                      getAltitude_ft(), longitude, latitude, hour(), minute(), second());
+        vTaskDelay(xDelay);
+    }
+};
+
 
 
 void setup()
 {
-    Serial.begin(9600);
+    printf("Program Started!");
+    delay(3000);
 
+    // PIN ASSIGNMENT
+    Serial.begin(USB_BAUD_RATE);
+    pinMode(LED_OUTPUT_PIN, OUTPUT);
+    pinMode(BUZZ_PIN, OUTPUT);
 
-    // Init sensors for tasks
-    // initBMP();
+    // I/O INIT
+    initI2C();
+
+    // DEVICE INIT
+    initBMP();
+    initNEO6M();
+    setSyncProvider(getTeensyTime);
     // initMPU6050();
-    // Task Creation
-    // xTaskCreate(testTask, "Test Task", 2048, NULL, 1, &testTaskHandle);
-    // xTaskCreate(testMPU, "MPU6050 Test Task", 4096, NULL, 1, &bmpTestHandle);
-    // createFile("/test.csv");
-    // const std::vector<DataPacket> dataArray = {
-    //     {0, 12, 1, 1, 57.1, 11.0, 11.0, 11.0, 0.12, 0.125},
-    //     {1, 12, 1, 2, 57.1, 11.0, 11.0, 11.0, 0.12, 0.125},
-    //     {2, 12, 1, 2, 57.1, 11.0, 11.0, 11.0, 0.12, 0.125}
-    // };
-    // writeData("/test.csv",dataArray);
-    // xTaskCreate(orientationLoop, "getOrientation", 4096, NULL, 1, &orientationLoopHandle);
-    // initBMP();
-    // Task Creation
-    xTaskCreate(sdTask, "Test Task", 2048, (void*)"/test_log.csv", 1, &testTaskHandle);
-    // xTaskCreate(test, "BMP280 Test Task", 4096, NULL, 1, &bmpTestHandle);
+    Serial.printf("Init Finished! Time: %04d-%02d-%02d %02d:%02d:%02d\n",
+                  year(), month(), day(), hour(), minute(), second());
 
-    vTaskStartScheduler();
+    // TASK CREATION
+    xTaskCreate(blinkyTask, "Blinky Task", 4096, NULL, 1, &blinkyHandle);
+    xTaskCreate(loggerTask, "Debug Task", 4096, NULL, 1, &loggerHandle);
 }
 
 void loop()
 {
-
+    vTaskStartScheduler();
+    printf("Wtf just happened");                                    // Should never Happen
 }
 

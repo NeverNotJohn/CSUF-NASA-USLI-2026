@@ -5,7 +5,17 @@
 #include <Arduino.h>
 #include <iostream>
 
-using namespace std;
+/************** FLAGS **************/
+#define ANNOY_CYAN          1
+
+
+/************** PINS **************/
+#define LED_OUTPUT_PIN      30
+#define BUZZ_PIN            31 
+#define LED_INTERNAL_PIN    13
+
+/************** SETTINGS **************/
+#define USB_BAUD_RATE       9600
 
 // typedefs & structs
 
