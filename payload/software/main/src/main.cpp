@@ -13,6 +13,7 @@ using namespace arduino;
 /************** TASK HANDLES **************/
 TaskHandle_t blinkyHandle = NULL;
 TaskHandle_t loggerHandle = NULL;
+TaskHandle_t mainHandle = NULL;
 
 /************** GLOBAL VARS **************/
 MissionState currentState;
