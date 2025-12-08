@@ -12,6 +12,8 @@
  /************** STATIC VARS **************/
 
  /************** FUNCTIONS **************/
+
+ /*
  void createFile(String filePath) {
     // Initialize SD card
     if (!SD.begin(BUILTIN_SDCARD)) {
@@ -60,3 +62,5 @@ bool writeData(String filePath, const std::vector<DataPacket>& dataArray) {
         return false;
     }
 }
+
+*/

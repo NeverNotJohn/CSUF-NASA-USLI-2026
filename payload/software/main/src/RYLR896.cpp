@@ -7,6 +7,7 @@
 #include "RYLR896.h"
 #include "defines.h"
 #include "arduino_freertos.h"
+#include "serialUSLI.h"
 
 // Do I wanna add a mutex?
 //      Yes because Main will also transmit data 
@@ -68,8 +69,12 @@ bool txRYLR896(String data)
     String out = buf;
 
     // Debug
-    Serial.printf("Sending Message: ");
-    Serial.println(out);
+    if (openUSB())
+    {
+        Serial.printf("Sending Message: ");
+        Serial.println(out);
+        closeUSB();
+    }
 
     return sendCommand(out);
 }         
