@@ -6,14 +6,15 @@
 #include "RYLR896.h"
 #include "i2c.h"
 #include "neo6m.h"
+#include "logger.h"
 #include <time.h>
 #include "timeUSLI.h"
+#include "serialUSLI.h"
 
 using namespace arduino;
 
 /************** TASK HANDLES **************/
 TaskHandle_t blinkyHandle = NULL;
-TaskHandle_t loggerHandle = NULL;
 TaskHandle_t mainHandle = NULL;
 
 /************** GLOBAL VARS **************/
@@ -64,36 +65,17 @@ void blinkyTask(void *pvParameters)
     }
 }
 
-// Use this for Debug Testing
-void loggerTask(void *pvParameters)
-{
-    const TickType_t xDelay = 500 / portTICK_PERIOD_MS;
-
-    float longitude = 0;
-    float latitude = 0;
-
-    for (;;)
-    {
-        if (encodeGPS())
-        {
-            longitude =  getLongitude();
-            latitude = getLatitude();
-        }
-        Serial.printf("Alt: %.2f ft, Long/Lat: (%.8f, %.8f), Time: (%i:%i:%i) \n", 
-                      getAltitude_ft(), longitude, latitude, hour(), minute(), second());
-        vTaskDelay(xDelay);
-    }
-};
-
 // Main Task
 void mainTask(void *pvParameters)
 {
+    // Setup
     beep(3, 100, 50);
     currentState = PRE_FLIGHT;
     int preFlightCounter = 0;
+    // createFile(f"2025-12-7_12-11-10_telemetry.csv");
 
     // Preflight
-    while (preFlightCounter < 10)
+    while (preFlightCounter < 30)
     {
 
         // Look for calibration sequence
@@ -112,8 +94,7 @@ void mainTask(void *pvParameters)
     int groundCounter = 0;
 
     // Outputs
-    beep(1, 1000, 0);
-    Serial.printf("LIFTOFF!\n");
+    beep(1, 1000, 500);
 
     // Inflight
     // Triggers 25 secs after trigger
@@ -133,8 +114,7 @@ void mainTask(void *pvParameters)
     time_t touchDownTime_s = Teensy3Clock.get();
 
     // Output
-    beep(5, 100, 10);
-    Serial.printf("TOUCHDOWN!\n");
+    beep(2, 1000, 500);
 
     // Post flight
     // Cool Rover Stuff
@@ -150,7 +130,6 @@ void mainTask(void *pvParameters)
 
     // Output
     beep(3, 1000, 500);
-    Serial.printf("YATA PLS SOIL!\n");
 
     // End of Mission
     for(;;) {}
@@ -168,7 +147,9 @@ void setup()
 
     // I/O INIT
     initI2C();
+    initUSB();
     buzzerMutex = xSemaphoreCreateMutex();
+    // timeSetup();
 
     // DEVICE INIT
     initBMP();
