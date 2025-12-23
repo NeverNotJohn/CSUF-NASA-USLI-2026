@@ -149,6 +149,7 @@ void setup()
     initI2C();
     initUSB();
     buzzerMutex = xSemaphoreCreateMutex();
+    // timeSetup();
 
     // DEVICE INIT
     initBMP();

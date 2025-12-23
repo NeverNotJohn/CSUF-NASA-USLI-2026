@@ -61,20 +61,18 @@ void initRYLR896()
 }       
 
 // Send data via RYLR896, 1 if success, 0 if fail
-bool txRYLR896(String data)
+bool txRYLR896(const char* data)
 {
-    // Send to Address 1
-    char buf[128];
-    snprintf(buf, sizeof(buf), "AT+SEND=1,%i,%s", data.length(), data.c_str());
-    String out = buf;
+    char buf[256];
+    snprintf(buf, sizeof(buf), "AT+SEND=1,%i,%s", strlen(data), data);
 
     // Debug
     if (openUSB())
     {
-        Serial.printf("Sending Message: ");
-        Serial.println(out);
+        Serial.print("Sending Message: ");
+        Serial.println(buf);
         closeUSB();
     }
 
-    return sendCommand(out);
-}         
+    return sendCommand(buf);
+}

@@ -27,46 +27,38 @@ void storeDataRam(DataPacket data)
 
 }
 
-void transmitPacket(void *pvParameters)
+void transmitPacket(const DataPacket& data)
 {
-    DataPacket *dataPtr = (DataPacket *)pvParameters;
-
     char buffer[128];
-    String stringBuffer;
 
     snprintf(buffer, sizeof(buffer),
-        "%lu %d %d %d %.2f %.4f %.4f %.0f %.0f %.0f",
-        dataPtr->n,               // uint32_t counter
-        dataPtr->hour,            // int
-        dataPtr->min,             // int
-        dataPtr->sec,             // int
-        dataPtr->altitude_ft,     // float
-        dataPtr->lng,             // float (6 decimal places)
-        dataPtr->lat,             // float (6 decimal places)
-        dataPtr->roll_deg,        // float
-        dataPtr->pitch_deg,       // float
-        dataPtr->yaw_deg          // float
+        "%lu %d %d %d %.2f %.6f %.6f %.0f %.0f %.0f",
+        data.n,
+        data.hour,
+        data.min,
+        data.sec,
+        data.altitude_ft,
+        data.lng,
+        data.lat,
+        data.roll_deg,
+        data.pitch_deg,
+        data.yaw_deg
     );
 
-    // Is this OK?
-    stringBuffer = String(buffer);
-    txRYLR896(stringBuffer);
-
-    delete dataPtr;               // Very uncomfy
-    vTaskDelete(NULL);
+    txRYLR896(buffer);  // Send directly
 }
+
 /************** EXTERN FUNCS **************/
 // Stores data onto RAM 
 void loggerTask(void *pvParameters)
 {
-    ///////////// Setup /////////////
-
     // Init RYLR896
     initRYLR896();
 
     // Init Vars
     DataPacket currentData;
     dataLog.size = 0;
+    TickType_t xLastWakeTime = xTaskGetTickCount();
 
     // Sensor Data
     uint32_t counter = 0;
@@ -114,11 +106,10 @@ void loggerTask(void *pvParameters)
         // Transmit Data every 10 seconds
         if ( (currentData.n % 20) == 0)
         {
-            DataPacket *packetCopy = new DataPacket(currentData);
-            xTaskCreate(transmitPacket, "Transmition Task", 4096, packetCopy, 1, NULL);
+            transmitPacket(currentData);
         }
         
         // Delay
-        vTaskDelay(pdMS_TO_TICKS(LOGGER_PERIOD_MS));
+        vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(LOGGER_PERIOD_MS));
     }
 };

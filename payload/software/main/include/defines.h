@@ -20,8 +20,8 @@
 #define POST_FLIGHT_TIME_S  60      // 900 = 15 minutes
 
 /************** PINS **************/
-#define LED_OUTPUT_PIN      30
-#define BUZZ_PIN            31 
+#define LED_OUTPUT_PIN      27      // 27 is fried lol
+#define BUZZ_PIN            32 
 #define LED_INTERNAL_PIN    13
 
 /************** SETTINGS **************/
