@@ -5,17 +5,29 @@
  *****************************************/
 
 #include "RYLR896.h"
+#include "bmp280.h"
 #include "defines.h"
+#include <stdint.h>
 #include "arduino_freertos.h"
 #include "serialUSLI.h"
+#include "beep.h"
 
-// Do I wanna add a mutex?
-//      Yes because Main will also transmit data 
-// Remove Serial Use within Task?
-//      Nah make new header for serial port 
+/******** DEFINES ********/
+
+typedef enum
+{
+    CMD_OK,
+    CMD_CALIBRATE,
+    CMD_ARM
+} RxCommands;
+
+/******** EXTERN VARS ********/
+extern TaskHandle_t rxHandle = NULL;
+
 
 /******** STATIC VARS ********/
 SemaphoreHandle_t rylr896Mutex;
+uint32_t rylr896Flags;
 
 /******** STATIC FUNCTIONS ********/
 // 1 = success, 0 = failure
@@ -36,7 +48,72 @@ static bool sendCommand(String cmd)
     return 1;
 }
 
+uint32_t decodePacket(String line)
+{
+    uint32_t result = CMD_OK; 
+    if (line == "+OK") return CMD_OK;
+    
+    // Decode Data Packet
+    char data;
+    char c;
+    int counter = 0;
+    for (int i = 0; i < line.length(); i++)
+    {
+        c = line[i];
+        if (counter == 2)   
+        {  
+            data = c;
+            break;
+        }
+        else if (c == ',') ++counter;
+    }
+
+    switch (data)
+    {
+        case 'C':
+            result = CMD_CALIBRATE;
+            break;
+        case 'A':
+            result = CMD_ARM;
+            break;
+    }
+    return result;
+}
+
 /******** EXTERNAL FUNCTIONS ********/
+
+void rxTask(void *pvParameters)
+{
+    String line;
+    int cmd;
+    for (;;)
+    {
+        if (RYLR896_SERIAL.available())
+        {
+            line = RYLR896_SERIAL.readStringUntil('\n');
+            line.trim();
+            
+            cmd = decodePacket(line);
+
+            switch (cmd)
+            {
+                case CMD_CALIBRATE:
+                    Serial.println("Calibrating!");
+                    calibrateBMP();
+                    beep(3, 100, 50);
+                    break;
+                case CMD_ARM:
+                    Serial.println("Arming!");
+                    // Arming logic
+                    beep(1, 3000, 0);
+                    break;
+            }
+
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(100));
+    }
+}
 
 void initRYLR896()
 {
@@ -58,6 +135,8 @@ void initRYLR896()
     
         xSemaphoreGive(rylr896Mutex);
     }
+
+    xTaskCreate(rxTask, "RX Task", 4096, NULL, 1, &rxHandle);
 }       
 
 // Send data via RYLR896, 1 if success, 0 if fail
