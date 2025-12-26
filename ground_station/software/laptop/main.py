@@ -3,6 +3,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import random
 import input
+from datetime import datetime, timezone
 
 # ===== Colors / Fonts =====
 BG = "#000000"
@@ -48,7 +49,8 @@ top_left.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
 
 top_left.insert(
     "end",
-    "> DATA\n"
+    "> STATUS\n"
+    "n\t0\n"
     "TIME\t00:00:00\n"
     "ALT\t0 ft\n"
     "LAT/LNG\t0°N, 0°W\n"
@@ -57,6 +59,30 @@ top_left.insert(
     "YAW\t0°\n"
 )
 top_left.config(state="disabled")
+
+def updateStatus(data):
+    # Enable editing
+    top_left.config(state="normal")
+    
+    # Clear current text
+    top_left.delete("1.0", tk.END)
+    
+    # Insert new data
+    top_left.insert(
+        tk.END,
+        f"> STATUS\n"
+        f"n\t{data["n"]}\n"
+        f"TIME\t{data["hour"]}:{data["minute"]}:{data["second"]}\n"
+        f"ALT\t{data["altitude"]} ft\n"
+        f"LAT/LNG\t{data["lat"]}°N, {data["lng"]}°W\n"
+        f"ROLL\t{data["roll"]}°\n"
+        f"PITCH\t{data["pitch"]}°\n"
+        f"YAW\t{data["yaw"]}°\n"
+    )
+    
+    # Make read-only again
+    top_left.config(state="disabled")
+    
 
 # ===== Top Right (Buttons) =====
 top_right = tk.Frame(main, bg=BG)
@@ -85,9 +111,9 @@ btn_style = {
     "highlightthickness": 0,
 }
 
-tk.Button(top_right, text="[ START ]", command=lambda: log("START"), **btn_style).grid(row=0, column=0, sticky="ew", pady=5)
-tk.Button(top_right, text="[ STATUS ]", command=lambda: log("STATUS"), **btn_style).grid(row=1, column=0, sticky="ew", pady=5)
-tk.Button(top_right, text="[ SHUTDOWN ]", command=lambda: log("SHUTDOWN"), **btn_style).grid(row=2, column=0, sticky="ew", pady=5)
+tk.Button(top_right, text="[ ARM ]", command=lambda: log("START"), **btn_style).grid(row=0, column=0, sticky="ew", pady=5)
+tk.Button(top_right, text="[ CALIBRATE ]", command=lambda: log("STATUS"), **btn_style).grid(row=1, column=0, sticky="ew", pady=5)
+tk.Button(top_right, text="[ HEHE ]", command=lambda: log("SHUTDOWN"), **btn_style).grid(row=2, column=0, sticky="ew", pady=5)
 
 # ===== Bottom Left (Console) =====
 console = tk.Text(main, bg=BG, fg=FG, font=FONT_TEXT,
@@ -95,6 +121,13 @@ console = tk.Text(main, bg=BG, fg=FG, font=FONT_TEXT,
 console.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
 console.insert("end", "> LOG OUTPUT\nSystem initialized...\n")
 console.config(state="disabled")
+
+def consoleAppend(data):
+    console.config(state="normal")
+    now_utc = datetime.now(timezone.utc)
+    console.insert("end", f"[{now_utc.hour}:{now_utc.minute}:{now_utc.second}] {data}\n")
+    console.config(state="disabled")
+
 #console.config(highlightthickness=2, highlightbackground="yellow")
 
 # ===== Bottom Right (Two Graphs Side-by-Side) =====
@@ -131,6 +164,11 @@ canvas.draw()
 canvas.get_tk_widget().pack(fill="both", expand=True)
 
 # ===== Streaming Data =====
+PORT = "COM9"
+BAUD = 9600
+RETRY_SEC = 2
+sm = input.SerialManager(PORT, BAUD)
+
 def update_plot():
     data1.pop(0)
     data2.pop(0)
@@ -141,6 +179,33 @@ def update_plot():
     canvas.draw()
     root.after(200, update_plot)
 
+def update_data():
+    sm.run()
+    data = sm.read()
+    
+    try:
+        if (data and data[:4] == "+RCV"):
+            rcvFlag = True
+        else:
+            rcvFlag = False
+    except:
+        rcvFlag = False
+    
+    # Add to console
+    if (data and rcvFlag):
+        consoleAppend(data)
+    
+    # Update Status
+    if (data and rcvFlag):
+        updateStatus(input.parse_payload(data))
+    
+    # Debug
+    if (data and rcvFlag):
+        print(input.parse_payload(data))
+    
+    root.after(100, update_data)
+
 update_plot()
+update_data()
 
 root.mainloop()

@@ -42,32 +42,17 @@ def parse_payload(line: str):
         print("Parse error:", e, "| Line:", line)
         return None
 
-class SerialHandler(serial.threaded.LineReader):
-    
-    currentData = {
-        "n": 0,
-        "hour": 0,
-        "minute": 0,
-        "second": 0,
-        "altitude": 0,
-        "lng": 0,
-        "lat": 0,
-        "roll": 0,
-        "pitch": 0,
-        "yaw": 0
-    }
-    
-    def handle_line(self, line):
+def handle_line(line):
         
-        if (line == "+OK"):
-            return
-        
-        line = parse_payload(line)
-        if (line):
-            currentData = line
-            print(f"n {currentData["n"]}\tTime {currentData["hour"]}:{currentData["minute"]}:{currentData["second"]}\t Alt {currentData["altitude"]} ft\tLng {currentData["lng"]}\tlat {currentData["lat"]}")
-        else:
-            print("Packet Loss!")
+    if (line == "+OK"):
+        return
+    
+    line = parse_payload(line)
+    if (line):
+        currentData = line
+        print(f"n {currentData["n"]}\tTime {currentData["hour"]}:{currentData["minute"]}:{currentData["second"]}\t Alt {currentData["altitude"]} ft\tLng {currentData["lng"]}\tlat {currentData["lat"]}")
+    else:
+        print("Packet Loss!")
         
         
 
@@ -82,13 +67,6 @@ class SerialManager:
         try:
             print("Connecting...")
             self.ser = serial.Serial(self.port, self.baud, timeout=1)
-
-            self.reader = serial.threaded.ReaderThread(
-                self.ser, SerialHandler
-            )
-            self.reader.start()
-            self.reader.connect()
-
             print("Connected")
             return True
 
@@ -125,15 +103,26 @@ class SerialManager:
         except serial.SerialException:
             print("TX error — lost connection")
             self.cleanup()
+    
+    def read(self):
+        try:
+            if self.ser.in_waiting > 0:
+                data = self.ser.readline().decode('utf-8', errors="ignore").strip()
+                return data
+            else:
+                return None
+        except:
+            print("Could not read COM Port")
+            self.ser = None
+            return None
+            
 
     def run(self):
-        while True:
-            if not self.ser:
-                if not self.connect():
-                    time.sleep(RETRY_SEC)
-            else:
-                break
-            time.sleep(0.5)
+        if not self.ser:
+            if not self.connect():
+                pass
+        else:
+            return
 
 def main():
     sm = SerialManager(PORT, BAUD)
@@ -141,9 +130,13 @@ def main():
     try:
         while True:
             sm.run()
-            haha = input("Enter Command: ")
-            sm.send(haha)
-            time.sleep(3)
+            data = sm.read()
+            if (data):
+                print(parse_payload(data))
+                #print(data)
+            #haha = input("Enter Command: ")
+            #sm.send(haha)
+            time.sleep(0.1)
     except KeyboardInterrupt:
         print("Exiting")
         sm.cleanup()
