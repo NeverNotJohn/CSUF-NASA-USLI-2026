@@ -3,7 +3,21 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import random
 import input
+import time
 from datetime import datetime, timezone
+
+# ===== Globals =====
+PORT = "COM9"
+BAUD = 9600
+RETRY_SEC = 2
+sm = input.SerialManager(PORT, BAUD)
+
+# ===== Funcs =====
+def log(msg):
+    console.config(state="normal")
+    console.insert("end", f"> {msg}\n")
+    console.see("end")
+    console.config(state="disabled")
 
 # ===== Colors / Fonts =====
 BG = "#000000"
@@ -68,17 +82,20 @@ def updateStatus(data):
     top_left.delete("1.0", tk.END)
     
     # Insert new data
-    top_left.insert(
-        tk.END,
-        f"> STATUS\n"
-        f"n\t{data["n"]}\n"
-        f"TIME\t{data["hour"]}:{data["minute"]}:{data["second"]}\n"
-        f"ALT\t{data["altitude"]} ft\n"
-        f"LAT/LNG\t{data["lat"]}°N, {data["lng"]}°W\n"
-        f"ROLL\t{data["roll"]}°\n"
-        f"PITCH\t{data["pitch"]}°\n"
-        f"YAW\t{data["yaw"]}°\n"
-    )
+    try:
+        top_left.insert(
+            tk.END,
+            f"> STATUS\n"
+            f"n\t{data["n"]}\n"
+            f"TIME\t{data["hour"]}:{data["minute"]}:{data["second"]}\n"
+            f"ALT\t{data["altitude"]} ft\n"
+            f"LAT/LNG\t{data["lat"]}°N, {data["lng"]}°W\n"
+            f"ROLL\t{data["roll"]}°\n"
+            f"PITCH\t{data["pitch"]}°\n"
+            f"YAW\t{data["yaw"]}°\n"
+        )
+    except:
+        log("Error Updating Status")
     
     # Make read-only again
     top_left.config(state="disabled")
@@ -94,11 +111,6 @@ top_right.rowconfigure((0, 1, 2), weight=1)
 top_right.columnconfigure(0, weight=1)
 
 # ===== Console log function =====
-def log(msg):
-    console.config(state="normal")
-    console.insert("end", f"> {msg}\n")
-    console.see("end")
-    console.config(state="disabled")
 
 # ===== Buttons =====
 btn_style = {
@@ -111,9 +123,24 @@ btn_style = {
     "highlightthickness": 0,
 }
 
-tk.Button(top_right, text="[ ARM ]", command=lambda: log("START"), **btn_style).grid(row=0, column=0, sticky="ew", pady=5)
-tk.Button(top_right, text="[ CALIBRATE ]", command=lambda: log("STATUS"), **btn_style).grid(row=1, column=0, sticky="ew", pady=5)
-tk.Button(top_right, text="[ HEHE ]", command=lambda: log("SHUTDOWN"), **btn_style).grid(row=2, column=0, sticky="ew", pady=5)
+def command(cmd):
+    # Literally sphagetti code
+    
+    logText = ""
+    rylrCmd = ""
+    if (cmd == "ARM"):
+        logText = "ARM"
+        rylrCmd = "A"
+    if (cmd == "CALIBRATE"):
+        logText = "CALIBRATE"
+        rylrCmd = "C"
+
+    log(logText)        # Log on Console
+    sm.send(rylrCmd)    # Send to RYLR896
+
+tk.Button(top_right, text="[ ARM ]", command=lambda: command("ARM"), **btn_style).grid(row=0, column=0, sticky="ew", pady=5)
+tk.Button(top_right, text="[ CALIBRATE ]", command=lambda: command("CALIBRATE"), **btn_style).grid(row=1, column=0, sticky="ew", pady=5)
+tk.Button(top_right, text="[ HEHE ]", command=lambda: command("SHUTDOWN"), **btn_style).grid(row=2, column=0, sticky="ew", pady=5)
 
 # ===== Bottom Left (Console) =====
 console = tk.Text(main, bg=BG, fg=FG, font=FONT_TEXT,
@@ -131,12 +158,61 @@ def consoleAppend(data):
 #console.config(highlightthickness=2, highlightbackground="yellow")
 
 # ===== Bottom Right (Two Graphs Side-by-Side) =====
+
+# Settings
+WINDOW = 300        # 5 mins
+
 graph_frame = tk.Frame(main, bg=BG)
 graph_frame.grid(row=1, column=1, sticky="nsew", padx=10, pady=10)
 #graph_frame.config(highlightthickness=2, highlightbackground="magenta")
 graph_frame.rowconfigure(0, weight=1)
 graph_frame.columnconfigure((0, 1), weight=1)
 
+fig = Figure(figsize=(5, 4), dpi=100)
+ax = fig.add_subplot(111)
+
+ax.set_facecolor(BG)
+fig.patch.set_facecolor(BG)
+ax.tick_params(colors=FG)
+for spine in ax.spines.values():
+    spine.set_color(FG)
+
+times = []
+values = []
+
+line, = ax.plot([], [], color=FG)
+ax.set_xlim(0, WINDOW)
+ax.set_xlabel("Time (s)", color=FG)
+ax.set_ylabel("Altitude (ft)", color=FG)
+
+canvas = FigureCanvasTkAgg(fig, master=graph_frame)
+canvas.draw()
+canvas.get_tk_widget().pack(fill="both", expand=True)
+
+start_time = time.time()
+
+def updateAlt(alt, n):
+    # Adjust for Time
+    n = n/2
+    
+    values.append(alt)
+    times.append(n)        
+
+    while times and (n - times[0] > WINDOW):
+        times.pop(0)
+        values.pop(0)
+
+    line.set_data(times, values)
+    ax.set_xlim(max(0, n - WINDOW), n)
+
+    if len(values) > 1:
+        ymin, ymax = min(values), max(values)
+        pad = (ymax - ymin) * 0.1 or 1
+        ax.set_ylim(ymin - pad, ymax + pad)
+
+    canvas.draw_idle()
+
+"""
 fig = Figure(figsize=(6, 4), dpi=100)
 fig.patch.set_facecolor(BG)
 
@@ -153,22 +229,41 @@ for ax in (ax1, ax2):
 data1 = [0] * 50
 data2 = [0] * 50
 
-line1, = ax1.plot(data1, color=FG)
+line1, = ax1.plot(alt_x, alt_y, color=FG)
 line2, = ax2.plot(data2, color=FG)
 
-ax1.set_title("SIGNAL A", color=FG, fontsize=14)
+# Plot 1 setup
+ax1.set_title("Altitude vs n", color=FG, fontsize=14)
+ax1.set_xlabel("n", color=FG)
+ax1.set_ylabel("Altitude (ft)", color=FG)
+
 ax2.set_title("SIGNAL B", color=FG, fontsize=14)
 
 canvas = FigureCanvasTkAgg(fig, master=graph_frame)
 canvas.draw()
 canvas.get_tk_widget().pack(fill="both", expand=True)
 
-# ===== Streaming Data =====
-PORT = "COM9"
-BAUD = 9600
-RETRY_SEC = 2
-sm = input.SerialManager(PORT, BAUD)
+def add_altitude_point(altitude_ft):
+    global n_counter
 
+    alt_y.pop(0)
+    alt_y.append(altitude_ft)
+
+    n_counter += 1
+    alt_x.pop(0)
+    alt_x.append(n_counter)
+
+    line1.set_data(alt_x, alt_y)
+
+    ax1.set_xlim(alt_x[-MAX_POINTS], alt_x[-1])
+    ax1.relim()
+    ax1.autoscale_view(scalex=False, scaley=True)
+
+    canvas.draw_idle()
+"""
+# ===== Streaming Data =====
+
+"""
 def update_plot():
     data1.pop(0)
     data2.pop(0)
@@ -178,6 +273,7 @@ def update_plot():
     line2.set_ydata(data2)
     canvas.draw()
     root.after(200, update_plot)
+"""
 
 def update_data():
     sm.run()
@@ -193,11 +289,17 @@ def update_data():
     
     # Add to console
     if (data and rcvFlag):
-        consoleAppend(data)
+        consoleAppend("Packet Received")
     
     # Update Status
     if (data and rcvFlag):
         updateStatus(input.parse_payload(data))
+    
+    # Update Plots
+    if (data and rcvFlag):
+        temp = input.parse_payload(data)
+        if (temp):
+            updateAlt(temp["altitude"], temp["n"])
     
     # Debug
     if (data and rcvFlag):
@@ -205,7 +307,6 @@ def update_data():
     
     root.after(100, update_data)
 
-update_plot()
 update_data()
 
 root.mainloop()

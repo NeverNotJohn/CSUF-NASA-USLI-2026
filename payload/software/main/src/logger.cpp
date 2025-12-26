@@ -103,8 +103,8 @@ void loggerTask(void *pvParameters)
             closeUSB();
         }
 
-        // Transmit Data every 10 seconds
-        if ( (currentData.n % 20) == 0)
+        // Transmit Data every 1 seconds
+        if ( (currentData.n % 2) == 0)
         {
             transmitPacket(currentData);
         }

@@ -53,10 +53,7 @@ static bool sendCommandInput(String cmd)
     String cmdTemp = cmd + "\r\n";
     String reply = "";
 
-    if (xSemaphoreTake(rylr896Mutex, portMAX_DELAY) == pdTRUE)
-    {
-        RYLR896_SERIAL_IN.print(cmdTemp);
-    }
+    RYLR896_SERIAL_IN.print(cmdTemp);
 
     vTaskDelay(500);                                                // Wait for +OK
 
@@ -103,10 +100,13 @@ void rxTask(void *pvParameters)
     int cmd;
     for (;;)
     {
-        if (RYLR896_SERIAL.available())
+        if (RYLR896_SERIAL_IN.available())
         {
-            line = RYLR896_SERIAL.readStringUntil('\n');
+            line = RYLR896_SERIAL_IN.readStringUntil('\n');
             line.trim();
+
+            // Debug
+            Serial.println(line);
             
             cmd = decodePacket(line);
 
@@ -125,7 +125,7 @@ void rxTask(void *pvParameters)
             }
 
         }
-
+        
         vTaskDelay(pdMS_TO_TICKS(100));
     }
 }
@@ -139,12 +139,12 @@ void initRYLR896()
     sendCommand("AT+ADDRESS=12");
     sendCommand("AT+NETWORKID=4");
     sendCommand("AT+BAND=901000000");
-    sendCommand("AT+PARAMETER=12,4,1,7");
+    sendCommand("AT+PARAMETER=10,7,1,7");
 
     sendCommandInput("AT+ADDRESS=13");
     sendCommandInput("AT+NETWORKID=4");
-    sendCommandInput("AT+BAND=901000000");
-    sendCommandInput("AT+PARAMETER=12,4,1,7");
+    sendCommandInput("AT+BAND=915000000");
+    sendCommandInput("AT+PARAMETER=10,7,1,7");
 
     vTaskDelay(1000);                                               // RYLR896 Needs time to setup
 

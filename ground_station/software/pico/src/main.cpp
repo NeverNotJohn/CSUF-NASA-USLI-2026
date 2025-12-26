@@ -13,10 +13,21 @@ static bool sendCommand(String cmd)
 bool txRYLR896(const char* data)
 {
     char buf[256];
-    snprintf(buf, sizeof(buf), "AT+SEND=0,%i,%s", strlen(data), data);
+
+    // Change freq
+    sendCommand("AT+BAND=915000000");
+    delay(500);
+
+    // Send
+    snprintf(buf, sizeof(buf), "AT+SEND=13,%i,%s", strlen(data), data);
+    sendCommand(buf);
+
+    // Change freq
+    sendCommand("AT+BAND=901000000");
+    delay(500);
 
     // Debug
-    return sendCommand(buf);
+    return 1;
 }
 
 /******** EXTERNAL FUNCTIONS ********/
@@ -28,7 +39,7 @@ void initRYLR896()
     sendCommand("AT+ADDRESS=1");
     sendCommand("AT+NETWORKID=4");
     sendCommand("AT+BAND=901000000");
-    sendCommand("AT+PARAMETER=12,4,1,7");
+    sendCommand("AT+PARAMETER=10,7,1,7");
 
     delay(1000);                                               // RYLR896 Needs time to setup
 }       
@@ -62,6 +73,13 @@ void loop() {
         {
             //Serial.println("Sending Arm CMD");
             txRYLR896("A");
+        }
+        if (line == "F")
+        {
+            sendCommand("AT+BAND=901000000");
+
+            // Debug
+            sendCommand("AT+BAND?");
         }
     }
 
