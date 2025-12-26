@@ -10,6 +10,7 @@
 #include <time.h>
 #include "timeUSLI.h"
 #include "serialUSLI.h"
+#include "beep.h"
 
 using namespace arduino;
 
@@ -19,34 +20,6 @@ TaskHandle_t mainHandle = NULL;
 
 /************** GLOBAL VARS **************/
 MissionState currentState;
-SemaphoreHandle_t buzzerMutex;
-// FIXME Mutex for buzzer?
-
-/************** HELPER FUNCTIONS **************/
-// Beeps
-void beep(int numBeeps, double onInterval_ms, double offInterval_ms)
-{
-
-    if (!ANNOY_CYAN) return;
-
-    if (xSemaphoreTake(buzzerMutex, portMAX_DELAY) == pdTRUE)
-    {
-        const TickType_t offInterval = offInterval_ms / portTICK_PERIOD_MS; 
-        const TickType_t onInterval = onInterval_ms / portTICK_PERIOD_MS; 
-
-        for (int i = 0; i < numBeeps; i++)
-        {
-            digitalWrite(BUZZ_PIN, 1);
-            vTaskDelay(onInterval);
-            digitalWrite(BUZZ_PIN, 0);
-            vTaskDelay(offInterval);
-        }
-
-        xSemaphoreGive(buzzerMutex);
-    }
-}
-
-
 
 /************** THREADS **************/
 // Sanity Check
@@ -89,6 +62,7 @@ void mainTask(void *pvParameters)
     }
 
     // Change States
+    // FIXME set armed flag
     currentState = IN_FLIGHT;
     time_t liftOffTime_s = Teensy3Clock.get();
     int groundCounter = 0;
@@ -148,7 +122,7 @@ void setup()
     // I/O INIT
     initI2C();
     initUSB();
-    buzzerMutex = xSemaphoreCreateMutex();
+    initBeep();
     // timeSetup();
 
     // DEVICE INIT

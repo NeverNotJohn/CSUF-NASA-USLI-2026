@@ -7,6 +7,7 @@
 #include "bmp280.h"
 #include <Adafruit_BMP280.h>
 #include "i2c.h"
+#include "beep.h"
 
 static Adafruit_BMP280 bmp;
 
