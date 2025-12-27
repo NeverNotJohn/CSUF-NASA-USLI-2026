@@ -4,17 +4,17 @@
  * 
  *****************************************/
 
- #include "sdfs.h"
- #include "defines.h"
- #include <SD.h>
- #include <vector>
- 
- /************** STATIC VARS **************/
+#include "sdfs.h"
+#include "defines.h"
+#include <SD.h>
+#include <vector>
 
- /************** FUNCTIONS **************/
+/************** STATIC VARS **************/
 
- /*
- void createFile(String filePath) {
+/************** FUNCTIONS **************/
+
+
+void createFile(String filePath) {
     // Initialize SD card
     if (!SD.begin(BUILTIN_SDCARD)) {
         Serial.println("No card");
@@ -22,7 +22,7 @@
     }
     Serial.println("SD Card initialized.");
     // Check if .csv file exists already
-    if(SD.exists(filePath.c_str())) {
+    if (SD.exists(filePath.c_str())) {
         Serial.println("File already exists.");
         return;
     }
@@ -36,22 +36,22 @@
     } else {
         Serial.println("Error creating file.");
     }
- }
+}
 
-  char* parsePacket(DataPacket packet){
+char* parsePacket(DataPacket packet){
     static char buffer[256];
-    snprintf(buffer, sizeof(buffer), "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f",
+    snprintf(buffer, sizeof(buffer), "%lu,%u,%u,%u,%f,%f,%f,%f,%f,%f",
              packet.n, packet.hour, packet.min, packet.sec,
              packet.altitude_ft, packet.lng, packet.lat,
-             packet.roll, packet.pitch, packet.yaw);
+             packet.roll_deg, packet.pitch_deg, packet.yaw_deg);
     return buffer;
 }
 // Using a vector for the datapacket array to allow dynamic sizing, can be changed to array if needed
-bool writeData(String filePath, const std::vector<DataPacket>& dataArray) {
+bool writeData(String filePath,  DataPacketLog dataArray) {
     File dataFile = SD.open(filePath.c_str(), FILE_WRITE);
     if (dataFile) {
-        for (const DataPacket packet : dataArray) {
-            const char* packetData = parsePacket(packet);
+        for (int i = 0; i < dataArray.size; i++) {
+            const char* packetData = parsePacket(dataArray.data[i]);
             dataFile.println(packetData);
         }
         dataFile.close();
@@ -63,4 +63,3 @@ bool writeData(String filePath, const std::vector<DataPacket>& dataArray) {
     }
 }
 
-*/

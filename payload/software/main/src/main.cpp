@@ -11,6 +11,7 @@
 #include "timeUSLI.h"
 #include "serialUSLI.h"
 #include "beep.h"
+#include "sdfs.h"
 
 using namespace arduino;
 
@@ -45,7 +46,9 @@ void mainTask(void *pvParameters)
     beep(3, 100, 50);
     currentState = PRE_FLIGHT;
     int preFlightCounter = 0;
-    // createFile(f"2025-12-7_12-11-10_telemetry.csv");
+    
+    char filePath[] = "2025-12-7_12-11-10_telemetry.csv";
+    createFile(filePath);
 
     // Preflight
     while (preFlightCounter < 30 || !(checkArmFlag()))
