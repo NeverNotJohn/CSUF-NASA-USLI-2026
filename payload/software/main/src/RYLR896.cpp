@@ -22,12 +22,12 @@ typedef enum
 } RxCommands;
 
 /******** EXTERN VARS ********/
-extern TaskHandle_t rxHandle = NULL;
-
+TaskHandle_t rxHandle = NULL;
 
 /******** STATIC VARS ********/
 SemaphoreHandle_t rylr896Mutex;
-uint32_t rylr896Flags;
+SemaphoreHandle_t flagMutex;
+int armedFlag = 0;
 
 /******** STATIC FUNCTIONS ********/
 // 1 = success, 0 = failure
@@ -94,6 +94,17 @@ uint32_t decodePacket(String line)
 
 /******** EXTERNAL FUNCTIONS ********/
 
+bool checkArmFlag()
+{
+    int result = 0;
+    if (xSemaphoreTake(flagMutex, portMAX_DELAY) == pdTRUE)
+    {
+        result = armedFlag;
+        xSemaphoreGive(flagMutex);
+    }
+    return result;
+}
+
 void rxTask(void *pvParameters)
 {
     String line;
@@ -119,8 +130,13 @@ void rxTask(void *pvParameters)
                     break;
                 case CMD_ARM:
                     Serial.println("Arming!");
-                    // Arming logic
+                    if (xSemaphoreTake(flagMutex, portMAX_DELAY) == pdTRUE)
+                    {
+                        armedFlag = 1;
+                        xSemaphoreGive(flagMutex);
+                    }
                     beep(1, 3000, 0);
+                    
                     break;
             }
 
@@ -135,6 +151,7 @@ void initRYLR896()
     RYLR896_SERIAL.begin(RYLR896_BAUD_RATE);
     RYLR896_SERIAL_IN.begin(RYLR896_BAUD_RATE);
     rylr896Mutex = xSemaphoreCreateMutex();
+    flagMutex = xSemaphoreCreateMutex();
 
     sendCommand("AT+ADDRESS=12");
     sendCommand("AT+NETWORKID=4");

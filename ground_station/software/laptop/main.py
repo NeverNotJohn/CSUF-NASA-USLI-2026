@@ -198,6 +198,13 @@ def updateAlt(alt, n):
     values.append(alt)
     times.append(n)        
 
+    if (n < times[0]):
+        line.set_data([],[])
+        values.clear()
+        times.clear()
+        values.append(alt)
+        times.append(n)       
+
     while times and (n - times[0] > WINDOW):
         times.pop(0)
         values.pop(0)
@@ -305,7 +312,7 @@ def update_data():
     if (data and rcvFlag):
         print(input.parse_payload(data))
     
-    root.after(100, update_data)
+    root.after(450, update_data)
 
 update_data()
 

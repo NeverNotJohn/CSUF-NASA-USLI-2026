@@ -48,7 +48,7 @@ void mainTask(void *pvParameters)
     // createFile(f"2025-12-7_12-11-10_telemetry.csv");
 
     // Preflight
-    while (preFlightCounter < 30)
+    while (preFlightCounter < 30 || !(checkArmFlag()))
     {
 
         // Look for calibration sequence
@@ -90,6 +90,9 @@ void mainTask(void *pvParameters)
     // Output
     beep(2, 1000, 500);
 
+    // Release TD3
+    digitalWrite(TD3_PIN, 1);
+
     // Post flight
     // Cool Rover Stuff
     while ((Teensy3Clock.get() - touchDownTime_s) < POST_FLIGHT_TIME_S)
@@ -117,6 +120,7 @@ void setup()
     // PIN ASSIGNMENT
     Serial.begin(USB_BAUD_RATE);
     pinMode(LED_OUTPUT_PIN, OUTPUT);
+    pinMode(TD3_PIN, OUTPUT);
     pinMode(BUZZ_PIN, OUTPUT);
 
     // I/O INIT

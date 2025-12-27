@@ -10,18 +10,18 @@
 #define ANNOY_CYAN          1
  
 // Preflight
-#define TRIGGER_FT          3       // 30
+#define TRIGGER_FT          3       // OFFICIAL: 30
 
 // Inflight
 #define FLIGHT_TIMEOUT_S    900
 #define GROUND_COUNTER_MAX  250
 
 // Postflight
-#define POST_FLIGHT_TIME_S  60      // 900 = 15 minutes
+#define POST_FLIGHT_TIME_S  60      // OFFICIAL: 900 = 15 minutes
 
 /************** PINS **************/
-#define LED_OUTPUT_PIN      27      // 28 is fried lol
-#define TD3_PIN             26
+#define LED_OUTPUT_PIN      13      // 28 is fried lol
+#define TD3_PIN             33
 #define BUZZ_PIN            32 
 #define LED_INTERNAL_PIN    13
 
