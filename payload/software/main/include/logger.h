@@ -18,4 +18,8 @@ extern DMAMEM DataPacketLog dataLog;
 void loggerTask(void *pvParameters);
 bool storeData();
 
+void initLogger();
+MissionState getMissionState();
+void setMissionState(MissionState state);
+
 #endif // LOGGER_H

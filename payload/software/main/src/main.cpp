@@ -19,9 +19,6 @@ using namespace arduino;
 TaskHandle_t blinkyHandle = NULL;
 TaskHandle_t mainHandle = NULL;
 
-/************** GLOBAL VARS **************/
-MissionState currentState;
-
 /************** THREADS **************/
 // Sanity Check
 void blinkyTask(void *pvParameters)
@@ -44,10 +41,13 @@ void mainTask(void *pvParameters)
 {
     // Setup
     beep(3, 100, 50);
-    currentState = PRE_FLIGHT;
+    setMissionState(PRE_FLIGHT);
     int preFlightCounter = 0;
-    
-    char filePath[] = "2025-12-7_12-11-10_telemetry.csv";
+
+    char filePath[256] = "2025-12-7_12-11-10_telemetry.csv";
+    snprintf(filePath, sizeof(filePath), "%04d-%02d-%02d_%02d-%02d-%02d_telemetry.csv", 
+            year(), month(), day(), hour(), minute(), second());
+
     createFile(filePath);
 
     // Preflight
@@ -65,8 +65,7 @@ void mainTask(void *pvParameters)
     }
 
     // Change States
-    // FIXME set armed flag
-    currentState = IN_FLIGHT;
+    setMissionState(IN_FLIGHT);
     time_t liftOffTime_s = Teensy3Clock.get();
     int groundCounter = 0;
 
@@ -87,7 +86,7 @@ void mainTask(void *pvParameters)
     }
 
     // Change States
-    currentState = POST_FLIGHT;
+    setMissionState(POST_FLIGHT);
     time_t touchDownTime_s = Teensy3Clock.get();
 
     // Output
@@ -105,11 +104,14 @@ void mainTask(void *pvParameters)
     }
 
     // Change States
-    currentState = MISSION_END;
+    setMissionState(MISSION_END);
     time_t missionEndTime_s = Teensy3Clock.get();
 
     // Output
     beep(3, 1000, 500);
+
+    // Store Data Onto SD Card
+    writeData(filePath, dataLog);
 
     // End of Mission
     for(;;) {}
@@ -130,6 +132,7 @@ void setup()
     initI2C();
     initUSB();
     initBeep();
+    initLogger();
     // timeSetup();
 
     // DEVICE INIT

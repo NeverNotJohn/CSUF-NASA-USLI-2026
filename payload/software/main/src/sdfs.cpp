@@ -47,7 +47,7 @@ char* parsePacket(DataPacket packet){
     return buffer;
 }
 // Using a vector for the datapacket array to allow dynamic sizing, can be changed to array if needed
-bool writeData(String filePath,  DataPacketLog dataArray) {
+bool writeData(String filePath,  DataPacketLog& dataArray) {
     File dataFile = SD.open(filePath.c_str(), FILE_WRITE);
     if (dataFile) {
         for (int i = 0; i < dataArray.size; i++) {

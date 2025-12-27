@@ -20,11 +20,17 @@ TaskHandle_t loggerHandle = NULL;
 DMAMEM DataPacketLog dataLog;
 
 /************** STATIC VARS **************/
+static MissionState missionState = PRE_FLIGHT;
+static SemaphoreHandle_t missionStateMutex; 
 
 /************** STATIC FUNCS **************/
 void storeDataRam(DataPacket data)
 {
+    if (dataLog.size >= DATA_LOG_SIZE) return;
 
+    int i = dataLog.size;
+    dataLog.data[i] = data;
+    dataLog.size = dataLog.size + 1;
 }
 
 void transmitPacket(const DataPacket& data)
@@ -108,8 +114,40 @@ void loggerTask(void *pvParameters)
         {
             transmitPacket(currentData);
         }
-        
+
+        // Store Data onto Ram
+        MissionState temp = getMissionState();
+        if (temp == IN_FLIGHT || temp == POST_FLIGHT)
+        {
+            storeDataRam(currentData);
+        }
+
         // Delay
         vTaskDelayUntil(&xLastWakeTime, pdMS_TO_TICKS(LOGGER_PERIOD_MS));
     }
 };
+
+void initLogger()
+{
+    missionStateMutex = xSemaphoreCreateMutex();
+}
+
+MissionState getMissionState()
+{
+    MissionState result = PRE_FLIGHT;
+    if (xSemaphoreTake(missionStateMutex, portMAX_DELAY) == pdTRUE)
+    {
+        result = missionState;
+        xSemaphoreGive(missionStateMutex);
+    }
+    return result;
+}
+
+void setMissionState(MissionState state)
+{
+    if (xSemaphoreTake(missionStateMutex, portMAX_DELAY) == pdTRUE)
+    {
+        missionState = state;
+        xSemaphoreGive(missionStateMutex);
+    }
+}
