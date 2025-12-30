@@ -6,9 +6,7 @@
 
 #include "bts7960.h"
 #include "defines.h"
-
-using namespace std;
-
+/************** FUNCTIONS **************/
 
 void BTS7960Forward(int speed)
 {
@@ -24,6 +22,7 @@ void BTS7960Backward(int speed)
     delayMicroseconds(100);
     analogWrite(BTS7960_LPWM_PIN, speed);
 }
+
 
 void BTS7960Stop()
 {
