@@ -71,7 +71,6 @@ top_left.insert(
     "ROLL\t0°\n"
     "PITCH\t0°\n"
     "YAW\t0°\n"
-    "STATE\tNA\n"
 )
 top_left.config(state="disabled")
 
@@ -94,7 +93,6 @@ def updateStatus(data):
             f"ROLL\t{data["roll"]}°\n"
             f"PITCH\t{data["pitch"]}°\n"
             f"YAW\t{data["yaw"]}°\n"
-            f"STATE\t{data["state"]}\n"
         )
     except:
         log("Error Updating Status")

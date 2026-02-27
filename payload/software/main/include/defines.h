@@ -43,8 +43,6 @@ typedef struct {
     float roll_deg;
     float pitch_deg;
     float yaw_deg;
-    uint8_t missionState;
-
 } DataPacket;
 
 typedef struct {
@@ -59,13 +57,10 @@ typedef struct {
 // } Vector3D;
 
 typedef enum {
-    PRE_FLIGHT, //0
-    IN_FLIGHT, //1
-    POST_FLIGHT, //2
-    MISSION_END, //3
-    ROVER, //4
-    FLIPPING, //5
-    DRILLING, //6
+    PRE_FLIGHT,
+    IN_FLIGHT,
+    POST_FLIGHT,
+    MISSION_END
 } MissionState;
 
 #endif // DEFINES_H

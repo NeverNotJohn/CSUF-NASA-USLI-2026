@@ -100,16 +100,6 @@ void mainTask(void *pvParameters)
     while ((Teensy3Clock.get() - touchDownTime_s) < POST_FLIGHT_TIME_S)
     {
         // Do Rover Stuff
-        // move around for x seconds
-        // flip up
-        // drill & shit
-        // analyze
-        // log data
-        // flip down
-        // repeat
-        
-        // pseduo code the fuck outta this
-        // digitalWrite(WHEEL_PIN, 1)
         vTaskDelay(pdMS_TO_TICKS(100));
     }
 

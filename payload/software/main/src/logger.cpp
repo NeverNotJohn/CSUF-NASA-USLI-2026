@@ -38,7 +38,7 @@ void transmitPacket(const DataPacket& data)
     char buffer[128];
 
     snprintf(buffer, sizeof(buffer),
-        "%lu %d %d %d %.2f %.6f %.6f %.0f %.0f %.0f %d",
+        "%lu %d %d %d %.2f %.6f %.6f %.0f %.0f %.0f",
         data.n,
         data.hour,
         data.min,
@@ -48,8 +48,7 @@ void transmitPacket(const DataPacket& data)
         data.lat,
         data.roll_deg,
         data.pitch_deg,
-        data.yaw_deg,
-        data.missionState
+        data.yaw_deg
     );
 
     txRYLR896(buffer);  // Send directly
@@ -92,30 +91,10 @@ void loggerTask(void *pvParameters)
         currentData.roll_deg = -1.0;                                // Insert MPU6050 Data
         currentData.pitch_deg = -1.0;
         currentData.yaw_deg = -1.0;
-
-        switch (getMissionState())
-        {
-        case PRE_FLIGHT:
-            currentData.missionState = 0;
-            break;
-        case IN_FLIGHT:
-            currentData.missionState = 1;
-            break;
-        case POST_FLIGHT:
-            currentData.missionState = 2;
-            break;
-        case MISSION_END:
-            currentData.missionState = 3;
-            break;
-        default:
-            currentData.missionState = 0; // Default state
-            break;
-        }
-
         
         if (openUSB())
         {
-            Serial.printf( "%i:\tTime (%i:%i:%i)\t\tAlt (ft) %.2f\t\tLng %f\t\tLat %f\t\tRoll Pitch Yaw (deg) (%.2f,%.2f,%.2f) \t\tMission State: %d \n",
+            Serial.printf( "%i:\tTime (%i:%i:%i)\t\tAlt (ft) %.2f\t\tLng %f\t\tLat %f\t\tRoll Pitch Yaw (deg) (%.2f,%.2f,%.2f) \n",
                 currentData.n,
                 currentData.hour,
                 currentData.min,
@@ -125,8 +104,7 @@ void loggerTask(void *pvParameters)
                 currentData.lat,
                 currentData.roll_deg,
                 currentData.pitch_deg,
-                currentData.yaw_deg,
-                currentData.missionState
+                currentData.yaw_deg
             );
             closeUSB();
         }
