@@ -92,10 +92,30 @@ void loggerTask(void *pvParameters)
         currentData.roll_deg = -1.0;                                // Insert MPU6050 Data
         currentData.pitch_deg = -1.0;
         currentData.yaw_deg = -1.0;
-        currentData.missionState = (uint8_t)getMissionState();
+
+        switch (getMissionState())
+        {
+        case PRE_FLIGHT:
+            currentData.missionState = 0;
+            break;
+        case IN_FLIGHT:
+            currentData.missionState = 1;
+            break;
+        case POST_FLIGHT:
+            currentData.missionState = 2;
+            break;
+        case MISSION_END:
+            currentData.missionState = 3;
+            break;
+        default:
+            currentData.missionState = 0; // Default state
+            break;
+        }
+
+        
         if (openUSB())
         {
-            Serial.printf( "%i:\tTime (%i:%i:%i)\t\tAlt (ft) %.2f\t\tLng %f\t\tLat %f\t\tRoll Pitch Yaw (deg) (%.2f,%.2f,%.2f)\t\tMission State: %i\n",
+            Serial.printf( "%i:\tTime (%i:%i:%i)\t\tAlt (ft) %.2f\t\tLng %f\t\tLat %f\t\tRoll Pitch Yaw (deg) (%.2f,%.2f,%.2f) \t\tMission State: %d \n",
                 currentData.n,
                 currentData.hour,
                 currentData.min,
