@@ -1,10 +1,22 @@
 import serial
 import serial.threaded
 import time
+from enum import IntEnum
+
+class MissionState(IntEnum):
+    PRE_FLIGHT = 0
+    IN_FLIGHT = 1
+    POST_FLIGHT = 2
+    MISSION_END = 3
+    ROVER = 4
+    FLIPPING = 5
+    DRILLING = 6
 
 PORT = "COM9"
 BAUD = 9600
 RETRY_SEC = 2
+
+
 
 def parse_payload(line: str):
     """
@@ -17,14 +29,15 @@ def parse_payload(line: str):
 
         # Split into values
         values = payload.split()
-        if len(values) != 10:
-            raise ValueError(f"Expected 10 fields, got {len(values)}")
+        if len(values) != 11:
+            raise ValueError(f"Expected 11 fields, got {len(values)}")
 
         # Map to variables
         n, hour, minute, second = map(int, values[:4])
         altitude, lng, lat = map(float, values[4:7])
-        roll, pitch, yaw = map(int, values[7:])
-
+        roll, pitch, yaw = map(float, values[7:10])
+        mission_state = MissionState(int(values[10])).name
+                
         return {
             "n": n,
             "hour": hour,
@@ -35,7 +48,8 @@ def parse_payload(line: str):
             "lat": lat,
             "roll": roll,
             "pitch": pitch,
-            "yaw": yaw
+            "yaw": yaw,
+            "state": mission_state
         }
 
     except (IndexError, ValueError) as e:
