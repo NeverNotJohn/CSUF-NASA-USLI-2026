@@ -38,7 +38,7 @@ void transmitPacket(const DataPacket& data)
     char buffer[128];
 
     snprintf(buffer, sizeof(buffer),
-        "%lu %d %d %d %.2f %.6f %.6f %.0f %.0f %.0f",
+        "%lu %d %d %d %.2f %.6f %.6f %.0f %.0f %.0f %d",
         data.n,
         data.hour,
         data.min,
@@ -48,7 +48,8 @@ void transmitPacket(const DataPacket& data)
         data.lat,
         data.roll_deg,
         data.pitch_deg,
-        data.yaw_deg
+        data.yaw_deg,
+        data.missionState
     );
 
     txRYLR896(buffer);  // Send directly
@@ -91,6 +92,35 @@ void loggerTask(void *pvParameters)
         currentData.roll_deg = -1.0;                                // Insert MPU6050 Data
         currentData.pitch_deg = -1.0;
         currentData.yaw_deg = -1.0;
+        switch (getMissionState())
+        {
+        case PRE_FLIGHT:
+            currentData.missionState = 0;
+            break;
+        
+        case IN_FLIGHT:
+            currentData.missionState = 1;
+            break;
+
+        case POST_FLIGHT:
+            currentData.missionState = 2;
+            break;
+        case MISSION_END:
+            currentData.missionState = 3;
+            break;
+        case ROVER:
+            currentData.missionState = 4;
+            break;
+        case FLIPPING:
+            currentData.missionState = 5;
+            break;
+        case DRILLING:
+            currentData.missionState = 6;
+            break;
+        default:
+            currentData.missionState = 7;
+            break;
+        }
         
         if (openUSB())
         {
