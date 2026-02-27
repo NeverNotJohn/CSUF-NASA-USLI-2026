@@ -6,6 +6,7 @@
 #include "RYLR896.h"
 #include "i2c.h"
 #include "neo6m.h"
+#include "flip.h"
 #include "logger.h"
 #include <time.h>
 #include "timeUSLI.h"
@@ -138,6 +139,8 @@ void setup()
     // DEVICE INIT
     initBMP();
     initNEO6M();
+    int servoPins[NUM_SERVOS] = {2, 3, 4, 5};
+    initLegs(servoPins);
     setSyncProvider(getTeensyTime);
     // initMPU6050();
     Serial.printf("Init Finished! Time: %04d-%02d-%02d %02d:%02d:%02d\n",
