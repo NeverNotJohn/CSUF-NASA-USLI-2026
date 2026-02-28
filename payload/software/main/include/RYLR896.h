@@ -10,10 +10,10 @@
 
 /******** SETTINGS ********/
 #define RYLR896_BAUD_RATE   115200
-#define RYLR896_SERIAL      Serial1             // Use Serial1 for RYLR896 communication
+#define RYLR896_SERIAL      Serial4             // Use Serial1 for RYLR896 communication
 #define RYLR896_ADDRESS     12
 
-#define RYLR896_SERIAL_IN   Serial5
+#define RYLR896_SERIAL_IN   Serial3
 #define RYLR896_ADDRESS_IN  13
 
 /******** FUNCTIONS ********/
