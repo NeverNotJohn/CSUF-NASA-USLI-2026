@@ -17,7 +17,7 @@ void initLegs(int servoPins[NUM_SERVOS])
     for (int i = 0; i < NUM_SERVOS; i++) {
         ServoControl servo;
         servo.init(servoPins[i]);
-
+        servo.callibrate();
         servos[i] = servo;
     }
 }
