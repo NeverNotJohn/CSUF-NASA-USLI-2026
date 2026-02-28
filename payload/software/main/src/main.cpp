@@ -75,8 +75,7 @@ void mainTask(void *pvParameters)
 
     // Inflight
     // Triggers 25 secs after trigger
-    while (groundCounter < GROUND_COUNTER_MAX && 
-          ((Teensy3Clock.get() - liftOffTime_s) < FLIGHT_TIMEOUT_S))
+    while (((Teensy3Clock.get() - liftOffTime_s) < FLIGHT_TIMEOUT_S))
     {
         if (getAltitude_ft() < TRIGGER_FT) 
             groundCounter++;
