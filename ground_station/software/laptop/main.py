@@ -5,13 +5,15 @@ import random
 import input
 import time
 from datetime import datetime, timezone
-
+import csv
+import os
 # ===== Globals =====
-PORT = "COM9"
+PORT = "/dev/ttyACM0"
 BAUD = 9600
 RETRY_SEC = 2
 sm = input.SerialManager(PORT, BAUD)
-
+CSV_FILE = "flight_data.csv"
+CSV_HEADERS = ["n", "hour", "minute", "second", "altitude", "lng", "lat", "roll", "pitch", "yaw"]
 # ===== Funcs =====
 def log(msg):
     console.config(state="normal")
@@ -26,7 +28,7 @@ FONT_TITLE = ("Courier New", 24, "bold")
 FONT_TEXT = ("Courier New", 14)
 
 root = tk.Tk()
-root.title("BIG DAWG TERMINAL")
+root.title("FS2 HELLHOUND")
 root.configure(bg=BG)
 
 # Fullscreen
@@ -36,7 +38,7 @@ root.bind("<Escape>", lambda e: root.attributes("-fullscreen", False))
 # ===== Title =====
 title = tk.Label(
     root,
-    text="> BIG DAWG TERMINAL",
+    text="> FS2 HELLHOUND",
     font=FONT_TITLE,
     fg=FG,
     bg=BG
@@ -73,6 +75,23 @@ top_left.insert(
     "YAW\t0°\n"
 )
 top_left.config(state="disabled")
+
+
+def initialize_csv(file_path: str = CSV_FILE, headers: list = CSV_HEADERS) -> None:
+    """Create the CSV file and write the header row."""
+    with open(file_path, mode="w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(headers)
+    print(f"Initialized '{file_path}' with headers: {headers}")
+
+def update_csv(data: dict, file_path: str = CSV_FILE) -> None:
+    """Append a new row of data to the CSV file."""
+    with open(file_path, mode="a", newline="") as f:
+        writer = csv.writer(f)
+        row = [data.get(header, "") for header in CSV_HEADERS]
+        writer.writerow(row)
+    print(f"Appended data to '{file_path}': {row}")
+
 
 def updateStatus(data):
     # Enable editing
@@ -297,7 +316,8 @@ def update_data():
     # Add to console
     if (data and rcvFlag):
         consoleAppend("Packet Received")
-    
+    if (data and rcvFlag):
+        update_csv(input.parse_payload(data))
     # Update Status
     if (data and rcvFlag):
         updateStatus(input.parse_payload(data))
@@ -313,6 +333,8 @@ def update_data():
         print(input.parse_payload(data))
     
     root.after(450, update_data)
+
+initialize_csv(CSV_FILE, CSV_HEADERS)
 
 update_data()
 
