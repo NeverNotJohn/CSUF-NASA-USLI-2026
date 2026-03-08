@@ -112,7 +112,7 @@ void loggerTask(void *pvParameters)
         // Transmit Data every 1 seconds
         if ( (currentData.n % 2) == 0)
         {
-            transmitPacket(currentData);
+            //transmitPacket(currentData);
         }
 
         // Store Data onto Ram

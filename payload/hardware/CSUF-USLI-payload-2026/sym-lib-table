@@ -4,4 +4,5 @@
   (lib (name "GPS6MV2")(type "KiCad")(uri "${KIPRJMOD}/symbols/GPS6MV2.kicad_sym")(options "")(descr ""))
   (lib (name "L298N Concept")(type "KiCad")(uri "${KIPRJMOD}/symbols/L298N Concept.kicad_sym")(options "")(descr ""))
   (lib (name "Generic Devices")(type "KiCad")(uri "${KIPRJMOD}/symbols/Generic Devices.kicad_sym")(options "")(descr ""))
+  (lib (name "buck_convertor")(type "KiCad")(uri "${KIPRJMOD}/symbols/buck_convertor.kicad_sym")(options "")(descr ""))
 )

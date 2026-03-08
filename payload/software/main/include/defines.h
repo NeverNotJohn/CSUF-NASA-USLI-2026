@@ -10,7 +10,7 @@
 #define ANNOY_CYAN          1
  
 // Preflight
-#define TRIGGER_FT          5       // OFFICIAL: 30
+#define TRIGGER_FT          30       // OFFICIAL: 30
 
 // Inflight
 #define FLIGHT_TIMEOUT_S    900
