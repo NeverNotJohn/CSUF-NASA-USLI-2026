@@ -18,5 +18,8 @@ void initMPU6050();
 Vector3D getAcceleration();
 // Reads angular Velocity data in rad/s from gyroscope
 Vector3D getAngularVelocity();
-
+float getRoll();
+float getPitch();
+float getYaw();
+void updateMPUFilter();
 #endif // MPU6050_H

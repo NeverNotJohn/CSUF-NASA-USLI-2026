@@ -4,12 +4,18 @@
 #include <Adafruit_Sensor.h>
 #include <defines.h>
 #include "i2c.h"
+#include "MadgwickAHRS.h"
+
 Adafruit_MPU6050 mpu;
+Vector3D acceleration = {0, 0, 0};
+Vector3D angularVelocity = {0, 0, 0};
+Madgwick filter;
 
 void initMPU6050()
 {
     // Wire1.begin();
     // Try to initialize!
+    openI2C();
     unsigned status;
     // Test addresses 0x68 (default, AD0 floating)
     status = mpu.begin(0x68);
@@ -21,37 +27,57 @@ void initMPU6050()
     if (!status)
     {
         Serial.println("Could not find MPU6050");
-        while (1)
-        {
-            delay(100);
-        } // How does delay work in freeRTOS
     }
-    Serial.println("MPU6050 initialized successfully!");
-    mpu.setAccelerometerRange(MPU6050_RANGE_2_G);
-    mpu.setGyroRange(MPU6050_RANGE_250_DEG);
+    mpu.setAccelerometerRange(MPU6050_RANGE_16_G);
+    mpu.setGyroRange(MPU6050_RANGE_500_DEG);
     mpu.setFilterBandwidth(MPU6050_BAND_21_HZ);
+    filter.begin(512.0f);
+
+    closeI2C();
+    Serial.println("MPU6050 initialized successfully!");
+    
 }
-Vector3D getAcceleration(){
-    Vector3D acceleration;
-    sensors_event_t accel, gyro, temp;
-    mpu.getEvent(&accel, &gyro, &temp);
-    acceleration.x = accel.acceleration.x;
-    acceleration.y = accel.acceleration.y;
-    acceleration.z = accel.acceleration.z;
+Vector3D getAcceleration() {
+
+    if (openI2C()) {
+        sensors_event_t accel, gyro, temp;
+        mpu.getEvent(&accel, &gyro, &temp);
+
+        acceleration.x = accel.acceleration.x;
+        acceleration.y = accel.acceleration.y;
+        acceleration.z = accel.acceleration.z;
+
+        closeI2C();
+    }
+
     return acceleration;
 }
+Vector3D getAngularVelocity() {
 
-Vector3D getAngularVelocity(){
-    Vector3D angularVelocity;
-    sensors_event_t accel, gyro, temp;
-    mpu.getEvent(&accel, &gyro, &temp);
-    angularVelocity.x = gyro.orientation.x;
-    angularVelocity.y = gyro.orientation.y;
-    angularVelocity.z = gyro.acceleration.z;
+    if (openI2C()) {
+        sensors_event_t accel, gyro, temp;
+        mpu.getEvent(&accel, &gyro, &temp);
+
+        angularVelocity.x = gyro.gyro.x;
+        angularVelocity.y = gyro.gyro.y;
+        angularVelocity.z = gyro.gyro.z; // was gyro.acceleration.z
+
+        closeI2C();
+    }
+
     return angularVelocity;
 }
-
-
-Vector3D getOrientation(){
-    
+float getRoll(){
+    return filter.getRoll();
+}
+float getPitch(){
+    return filter.getPitch();
+}
+float getYaw(){  
+    return filter.getYaw();
+}
+void updateMPUFilter() {
+    Vector3D gyro = getAngularVelocity();
+    Vector3D accel = getAcceleration();
+    filter.updateIMU(gyro.x,gyro.y,gyro.z,accel.x,accel.y,accel.z);
 }

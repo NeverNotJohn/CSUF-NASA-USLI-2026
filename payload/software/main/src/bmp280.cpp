@@ -15,6 +15,9 @@ static Adafruit_BMP280 bmp;
 static double baselinePressure;
 static bool statusFlag;
 
+float val = -676767.0;
+float temp = -676767.0;
+
 // FIXME try and catch
 // Initilizes the BMP by finding it on I2C adresses 0x77 & 0x76
 void initBMP()
@@ -78,21 +81,18 @@ double getBaselinePressure()
 // Reads the temperature data in celcius
 float getTemperature_C()
 {
-    float val = -676767.0;
     if (openI2C())
     {
-        val = bmp.readTemperature();
+        temp = bmp.readTemperature();
         closeI2C();
     }
 
-    return val;
-    return bmp.readTemperature();
+    return temp;
 }
 
 // Reads the altitude data using the baseline pressure
 float getAltitude_ft()
 {
-    float val = -676767.0;
     if (openI2C())
     {
         val = bmp.readAltitude(baselinePressure) * 3.28084;

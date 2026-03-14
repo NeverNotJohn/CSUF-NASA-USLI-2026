@@ -12,13 +12,12 @@
 #include "serialUSLI.h"
 #include "beep.h"
 #include "sdfs.h"
-
 using namespace arduino;
 
 /************** TASK HANDLES **************/
 TaskHandle_t blinkyHandle = NULL;
 TaskHandle_t mainHandle = NULL;
-
+TaskHandle_t filterMPUHandle = NULL;
 /************** THREADS **************/
 // Sanity Check
 void blinkyTask(void *pvParameters)
@@ -117,6 +116,20 @@ void mainTask(void *pvParameters)
     for(;;) {}
 }
 
+
+void filterMPUTask(void *pvParameters){
+    for(;;){
+        updateMPUFilter();
+        Serial.print("Roll: ");
+        Serial.print(getRoll());
+        Serial.print(" Pitch: ");
+        Serial.print(getPitch());
+        Serial.print(" Yaw: ");
+        Serial.println(getYaw());
+        vTaskDelay(pdMS_TO_TICKS(5));
+    }
+}
+
 void setup()
 {
     printf("Program Started!");
@@ -139,12 +152,13 @@ void setup()
     initBMP();
     initNEO6M();
     setSyncProvider(getTeensyTime);
-    // initMPU6050();
+    initMPU6050();
     Serial.printf("Init Finished! Time: %04d-%02d-%02d %02d:%02d:%02d\n",
                   year(), month(), day(), hour(), minute(), second());
 
     // TASK CREATION
     xTaskCreate(blinkyTask, "Blinky Task", 4096, NULL, 1, &blinkyHandle);
+    xTaskCreate(filterMPUTask, "MPU Task", 4096, NULL, 1, &filterMPUHandle);
     xTaskCreate(mainTask, "Main Task", 4096, NULL, 1, &mainHandle);
     xTaskCreate(loggerTask, "Debug Task", 4096, NULL, 1, &loggerHandle);
 }
