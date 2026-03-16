@@ -1,0 +1,7 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "Teensy_4.1")(type "KiCad")(uri "${KIPRJMOD}/footprints/DEV-16771.pretty")(options "")(descr ""))
+  (lib (name "IRLZ44N")(type "KiCad")(uri "${KIPRJMOD}/footprints/IRLZ44N.pretty")(options "")(descr ""))
+  (lib (name "BMP280")(type "KiCad")(uri "${KIPRJMOD}/footprints/BMP280.pretty")(options "")(descr ""))
+  (lib (name "MPU6050")(type "KiCad")(uri "${KIPRJMOD}/footprints/MPU6050.pretty")(options "")(descr ""))
+)
