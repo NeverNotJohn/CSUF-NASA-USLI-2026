@@ -2,55 +2,69 @@
  * 
  * Servo Source File 
  * 
- * 
  *****************************************/
-
-#include "defines.h"
-#include "arduino_freertos.h"
-#include "Servo.h"
+#include <Arduino.h>
+#include <ServoEasing.hpp>
 #include "servocontrol.h"
 
 /******** PRIVATE VARS ********/
 
 /******** INTERNAL FUNCTIONS ********/
 
-/******** EXTERNAL FUNCTIONS ********/
-ServoControl::ServoControl() : pin(-1), currentAngle(90) {}
+// In ServoControl.h, add a method:
 
-void ServoControl::init(int pin) {
-    this->pin = pin;
-    servo.attach(pin);
-    servo.write(currentAngle);
+
+/******** EXTERNAL FUNCTIONS ********/
+
+ServoControl::ServoControl() : pin(-1), currentAngle(175) {}
+
+ServoControl::ServoControl(int pin, int startAngle) : pin(pin), currentAngle(startAngle) {
+    init(pin, startAngle);
+}
+
+void ServoControl::prepareAngle(int targetAngle, int time_ms) {
+    if (time_ms <= 0 || targetAngle == currentAngle) {
+        setAngle(targetAngle);
+        return;
+    }
+    currentAngle = targetAngle;
+    servo.setEaseToD(targetAngle, time_ms); // takes ms directly, no conversion needed
+    // servo.setEaseTo(targetAngle, (abs(targetAngle - servo.read()) / (float)time_ms) * 1000.0f);
+}
+
+void ServoControl::init(int pin, int startAngle) {
+    this->pin    = pin;
+    currentAngle = startAngle;
+
+    // Attach at startAngle
+    servo.attach(pin, startAngle);
+    servo.setEasingType(EASE_LINEAR);
 }
 
 void ServoControl::setAngle(int angle) {
     if (currentAngle == angle) return;
     currentAngle = angle;
-    servo.write(angle);
+    servo.write(angle);  // direct write, no easing
 }
 
 void ServoControl::turnToAngle(int targetAngle, int time_ms) {
-    // 20ms is a standard refresh rate servos.
-    int stepInterval = 20; 
-    int totalSteps = time_ms / stepInterval;
-
-    if (totalSteps <= 0) {
+    if (time_ms <= 0 || targetAngle == currentAngle) {
         setAngle(targetAngle);
         return;
     }
 
-    float angleIncrement = (float)(targetAngle - currentAngle) / totalSteps;
-    float startAngle = (float)currentAngle;
+    int angleDelta = abs(targetAngle - currentAngle);
+    float speed = (angleDelta / (float)time_ms) * 1000.0f;
 
-    for (int i = 1; i <= totalSteps; i++) {
-        int nextPos = startAngle + (angleIncrement * i);
-        setAngle(nextPos);
-        vTaskDelay(pdMS_TO_TICKS(stepInterval)); 
-    }
-
-    setAngle(targetAngle);
+    Serial.println("Turning servo on pin " + String(pin) + " from " + String(currentAngle) 
+        + "deg to " + String(targetAngle) + "deg in " + String(time_ms) + "ms (speed: " 
+        + String(speed) + "deg/s)");
+    
+    currentAngle = targetAngle;
+    servo.startEaseToD(targetAngle, time_ms); // takes ms directly, no conversion needed
 }
 
 void ServoControl::callibrate() {
-    setAngle(0);
+    turnToAngle(180, 5000);
 }
+

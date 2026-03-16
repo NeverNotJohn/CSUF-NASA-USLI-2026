@@ -43,6 +43,7 @@ typedef struct {
     float roll_deg;
     float pitch_deg;
     float yaw_deg;
+    uint8_t missionState;
 } DataPacket;
 
 typedef struct {
