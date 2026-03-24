@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 import csv
 import os
 # ===== Globals =====
-PORT = "/dev/ttyACM0"
+PORT = "/dev/ttyACM2"
 BAUD = 9600
 RETRY_SEC = 2
 sm = input.SerialManager(PORT, BAUD)

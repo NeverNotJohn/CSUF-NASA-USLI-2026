@@ -2,7 +2,7 @@ import serial
 import serial.threaded
 import time
 
-PORT = "/dev/ttyACM0"
+PORT = "/dev/ttyACM2"
 BAUD = 9600
 RETRY_SEC = 2
 
