@@ -120,12 +120,12 @@ void mainTask(void *pvParameters)
 void filterMPUTask(void *pvParameters){
     for(;;){
         updateMPUFilter();
-        Serial.print("Roll: ");
-        Serial.print(getRoll());
-        Serial.print(" Pitch: ");
-        Serial.print(getPitch());
-        Serial.print(" Yaw: ");
-        Serial.println(getYaw());
+        // Serial.print("Roll: ");
+        // Serial.print(getRoll());
+        // Serial.print(" Pitch: ");
+        // Serial.print(getPitch());
+        // Serial.print(" Yaw: ");
+        // Serial.println(getYaw());
         vTaskDelay(pdMS_TO_TICKS(5));
     }
 }

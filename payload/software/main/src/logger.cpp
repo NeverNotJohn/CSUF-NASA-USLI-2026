@@ -40,7 +40,7 @@ void transmitPacket(const DataPacket& data)
     char buffer[128];
 
     snprintf(buffer, sizeof(buffer),
-        "%lu %d %d %d %.2f %.6f %.6f %.0f %.0f %.0f",
+        "%lu %d %d %d %.2f %.6f %.6f %.0f %.0f %.0f %d",
         data.n,
         data.hour,
         data.min,
@@ -97,7 +97,7 @@ void loggerTask(void *pvParameters)
         currentData.pitch_deg = getPitch();
         currentData.yaw_deg = getYaw();
 
-        currentData.missionState = (int)getMissionState();
+        currentData.missionState = (uint8_t)getMissionState();
         
         if (openUSB())
         {
