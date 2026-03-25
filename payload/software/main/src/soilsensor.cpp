@@ -11,7 +11,7 @@
 #include <array>
 /******** STATIC VARS ********/
 static const byte SENSOR_ADDRESS = 0x01;
-const int RS485_DE_RE = 2; // Pin to control RS485 board DE/RE
+const int RS485_DE_RE = 26; // Pin to control RS485 board DE/RE
 static const byte READ_COMMAND[] = {
     SENSOR_ADDRESS,
     0x03, // Function Code: Read Holding Registers

@@ -8,12 +8,12 @@ from datetime import datetime, timezone
 import csv
 import os
 # ===== Globals =====
-PORT = "/dev/ttyACM1"
+PORT = "/dev/ttyACM2"
 BAUD = 9600
 RETRY_SEC = 2
 sm = input.SerialManager(PORT, BAUD)
 CSV_FILE = "flight_data.csv"
-CSV_HEADERS = ["n", "hour", "minute", "second", "altitude", "lng", "lat", "roll", "pitch", "yaw"]
+CSV_HEADERS = ["n", "hour", "minute", "second", "altitude", "lng", "lat", "roll", "pitch", "yaw", "mission_state"]
 # ===== Funcs =====
 def log(msg):
     console.config(state="normal")
@@ -73,6 +73,7 @@ top_left.insert(
     "ROLL\t0°\n"
     "PITCH\t0°\n"
     "YAW\t0°\n"
+    "STATE\tNA\n"
 )
 top_left.config(state="disabled")
 
@@ -112,6 +113,7 @@ def updateStatus(data):
             f"ROLL\t{data["roll"]}°\n"
             f"PITCH\t{data["pitch"]}°\n"
             f"YAW\t{data["yaw"]}°\n"
+            f"STATE\t{data["mission_state"]}\n"
         )
     except:
         log("Error Updating Status")

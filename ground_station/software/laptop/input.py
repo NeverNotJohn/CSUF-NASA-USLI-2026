@@ -2,7 +2,7 @@ import serial
 import serial.threaded
 import time
 
-PORT = "/dev/ttyACM1"
+PORT = "/dev/ttyACM2"
 BAUD = 9600
 RETRY_SEC = 2
 
@@ -17,14 +17,14 @@ def parse_payload(line: str):
 
         # Split into values
         values = payload.split()
-        if len(values) != 10:
-            raise ValueError(f"Expected 10 fields, got {len(values)}")
+        if len(values) != 11:
+            raise ValueError(f"Expected 11 fields, got {len(values)}")
 
         # Map to variables
         n, hour, minute, second = map(int, values[:4])
         altitude, lng, lat = map(float, values[4:7])
-        roll, pitch, yaw = map(int, values[7:])
-
+        roll, pitch, yaw = map(int, values[7:10])
+        mission_state = values[10]
         return {
             "n": n,
             "hour": hour,
@@ -35,7 +35,8 @@ def parse_payload(line: str):
             "lat": lat,
             "roll": roll,
             "pitch": pitch,
-            "yaw": yaw
+            "yaw": yaw,
+            "mission_state": mission_state
         }
 
     except (IndexError, ValueError) as e:
@@ -50,7 +51,7 @@ def handle_line(line):
     line = parse_payload(line)
     if (line):
         currentData = line
-        print(f"n {currentData["n"]}\tTime {currentData["hour"]}:{currentData["minute"]}:{currentData["second"]}\t Alt {currentData["altitude"]} ft\tLng {currentData["lng"]}\tlat {currentData["lat"]}")
+        print(f"n {currentData["n"]}\tTime {currentData["hour"]}:{currentData["minute"]}:{currentData["second"]}\t Alt {currentData["altitude"]} ft\tLng {currentData["lng"]}\tlat {currentData["lat"]}\t {currentData["mission_state"]}")
     else:
         print("Packet Loss!")
         

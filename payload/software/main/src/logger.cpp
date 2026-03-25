@@ -40,7 +40,7 @@ void transmitPacket(const DataPacket& data)
     char buffer[128];
 
     snprintf(buffer, sizeof(buffer),
-        "%lu %d %d %d %.2f %.6f %.6f %.0f %.0f %.0f",
+        "%lu %d %d %d %.2f %.6f %.6f %.0f %.0f %.0f %d",
         data.n,
         data.hour,
         data.min,
@@ -50,7 +50,8 @@ void transmitPacket(const DataPacket& data)
         data.lat,
         data.roll_deg,
         data.pitch_deg,
-        data.yaw_deg
+        data.yaw_deg,
+        data.missionState
     );
 
     txRYLR896(buffer);  // Send directly
@@ -95,10 +96,12 @@ void loggerTask(void *pvParameters)
         currentData.roll_deg =  getRoll();                                // Insert MPU6050 Data
         currentData.pitch_deg = getPitch();
         currentData.yaw_deg = getYaw();
+
+        currentData.missionState = (uint8_t)getMissionState();
         
         if (openUSB())
         {
-            Serial.printf( "%i:\tTime (%i:%i:%i)\t\tAlt (ft) %.2f\t\tLng %f\t\tLat %f\t\tRoll Pitch Yaw (deg) (%.2f,%.2f,%.2f) \n",
+            Serial.printf( "%i:\tTime (%i:%i:%i)\t\tAlt (ft) %.2f\t\tLng %f\t\tLat %f\t\tRoll Pitch Yaw (deg) (%.2f,%.2f,%.2f)\t\t Mission State %i \n",
                 currentData.n,
                 currentData.hour,
                 currentData.min,
@@ -108,7 +111,8 @@ void loggerTask(void *pvParameters)
                 currentData.lat,
                 currentData.roll_deg,
                 currentData.pitch_deg,
-                currentData.yaw_deg
+                currentData.yaw_deg,
+                currentData.missionState
             );
             closeUSB();
         }
