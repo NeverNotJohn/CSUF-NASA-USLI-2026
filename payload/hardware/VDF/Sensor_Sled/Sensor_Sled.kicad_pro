@@ -453,7 +453,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "CSUF-USLI-payload-2026.kicad_pro",
+    "filename": "Sensor_Sled.kicad_pro",
     "version": 3
   },
   "net_settings": {
@@ -489,7 +489,7 @@
       "gencad": "",
       "idf": "",
       "netlist": "",
-      "plot": "",
+      "plot": "Sensor_Sled_Gerber/",
       "pos_files": "",
       "specctra_dsn": "",
       "step": "",

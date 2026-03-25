@@ -22,7 +22,7 @@
 /************** PINS **************/
 #define LED_OUTPUT_PIN      13      // 28 is fried lol
 #define TD3_PIN             10
-#define BUZZ_PIN            12 
+#define BUZZ_PIN            33 
 #define LED_INTERNAL_PIN    13
 
 /************** SETTINGS **************/
