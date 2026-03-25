@@ -9,6 +9,7 @@
 #include "logger.h"
 #include <time.h>
 #include "timeUSLI.h"
+#include "soilsensor.h"
 #include "serialUSLI.h"
 #include "beep.h"
 #include "sdfs.h"
@@ -118,15 +119,27 @@ void mainTask(void *pvParameters)
 
 
 void filterMPUTask(void *pvParameters){
-    for(;;){
-        updateMPUFilter();
-        // Serial.print("Roll: ");
-        // Serial.print(getRoll());
-        // Serial.print(" Pitch: ");
-        // Serial.print(getPitch());
-        // Serial.print(" Yaw: ");
-        // Serial.println(getYaw());
-        vTaskDelay(pdMS_TO_TICKS(5));
+    for(;;) {
+        if(readSoilSensor()) {
+            Serial.println("************** SOIL DATA **************");
+            Serial.print("Soil Humidity (%): ");
+            Serial.println(getSoilHumidity());
+            Serial.print("Soil Temperature (C): ");
+            Serial.println(getSoilTemperature_c());
+            Serial.print("Soil EC (uS/cm): ");
+            Serial.println(getSoilEC_us_cm());
+            Serial.print("Soil pH: ");
+            Serial.println(getSoilpH());
+            Serial.print("Nitrogen (mg/kg): ");
+            Serial.println(getN_mg_kg());
+            Serial.print("Phosphorus (mg/kg): ");
+            Serial.println(getP_mg_kg());
+            Serial.print("Potassium (mg/kg): ");
+            Serial.println(getK_mg_kg());
+        } else {
+            Serial.println("Failed to read soil sensor data.");
+        }
+        vTaskDelay(pdMS_TO_TICKS(500));
     }
 }
 
@@ -153,6 +166,7 @@ void setup()
     initNEO6M();
     setSyncProvider(getTeensyTime);
     initMPU6050();
+    initSoilSensor();
     Serial.printf("Init Finished! Time: %04d-%02d-%02d %02d:%02d:%02d\n",
                   year(), month(), day(), hour(), minute(), second());
 

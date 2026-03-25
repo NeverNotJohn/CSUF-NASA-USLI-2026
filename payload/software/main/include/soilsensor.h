@@ -9,7 +9,7 @@
 #define SOIlSENSOR_H
 
 /************** DEFINES **************/
-#define SOIlSENSOR_SERIAL        Serial1
+#define SOIlSENSOR_SERIAL        Serial6
 #define SOIlSENSOR_BAUD_RATE     4800
 
 /************** EXTERNAL FUNCTIONS **************/
