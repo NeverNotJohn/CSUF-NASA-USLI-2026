@@ -172,7 +172,7 @@ void setup()
 
     // TASK CREATION
     xTaskCreate(blinkyTask, "Blinky Task", 4096, NULL, 1, &blinkyHandle);
-    xTaskCreate(filterMPUTask, "MPU Task", 4096, NULL, 1, &filterMPUHandle);
+    //xTaskCreate(filterMPUTask, "MPU Task", 4096, NULL, 1, &filterMPUHandle);
     xTaskCreate(mainTask, "Main Task", 4096, NULL, 1, &mainHandle);
     xTaskCreate(loggerTask, "Debug Task", 4096, NULL, 1, &loggerHandle);
 }
