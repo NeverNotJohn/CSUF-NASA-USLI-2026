@@ -44,11 +44,15 @@ void mainTask(void *pvParameters)
     setMissionState(PRE_FLIGHT);
     int preFlightCounter = 0;
 
-    char filePath[256] = "2025-12-7_12-11-10_telemetry.csv";
-    snprintf(filePath, sizeof(filePath), "%04d-%02d-%02d_%02d-%02d-%02d_telemetry.csv", 
+    char telemetryFilePath[256] = "2025-12-7_12-11-10_telemetry.csv";
+    snprintf(telemetryFilePath, sizeof(telemetryFilePath), "%04d-%02d-%02d_%02d-%02d-%02d_telemetry.csv", 
             year(), month(), day(), hour(), minute(), second());
+    createFile(telemetryFilePath);
 
-    createFile(filePath);
+    char soilFilePath[256] = "2025-12-7_12-11-10_soil.csv";
+    snprintf(soilFilePath, sizeof(soilFilePath), "%04d-%02d-%02d_%02d-%02d-%02d_soil.csv", 
+            year(), month(), day(), hour(), minute(), second());
+    createSoilFile(soilFilePath);
 
     // Preflight
     while (preFlightCounter < 30 || !(checkArmFlag()))
@@ -97,9 +101,27 @@ void mainTask(void *pvParameters)
 
     // Post flight
     // Cool Rover Stuff
+    int soilCounter = 0;
     while ((Teensy3Clock.get() - touchDownTime_s) < POST_FLIGHT_TIME_S)
     {
         // Do Rover Stuff
+
+        // Stand
+        vTaskDelay(pdMS_TO_TICKS(10000));
+
+        // Drill
+        vTaskDelay(pdMS_TO_TICKS(10000));
+
+
+        // Sample
+        SoilPacket SoilPacket;
+        SoilPacket.n = soilCounter++;
+        SoilPacket.hour = hour();
+        SoilPacket.min = minute();
+        SoilPacket.sec = second();
+        SoilPacket.pH = getSoilpH();
+        SoilPacket.EC = getSoilEC_us_cm();
+        storeSoilDataRam(SoilPacket);
         vTaskDelay(pdMS_TO_TICKS(100));
     }
 
@@ -111,7 +133,8 @@ void mainTask(void *pvParameters)
     beep(3, 1000, 500);
 
     // Store Data Onto SD Card
-    writeData(filePath, dataLog);
+    writeData(telemetryFilePath, dataLog);
+    writeSoilData(soilFilePath, soilLog);
 
     // End of Mission
     for(;;) {}
@@ -159,7 +182,7 @@ void setup()
     initUSB();
     initBeep();
     initLogger();
-    // timeSetup();
+    //timeSetup();
 
     // DEVICE INIT
     initBMP();
