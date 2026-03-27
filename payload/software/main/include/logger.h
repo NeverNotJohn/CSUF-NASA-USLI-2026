@@ -13,10 +13,12 @@
 /************** EXTERN VARS **************/
 extern TaskHandle_t loggerHandle;
 extern DMAMEM DataPacketLog dataLog;
+extern DMAMEM SoilPacketLog soilLog;
 
 /************** EXTERNAL FUNCTIONS **************/
 void loggerTask(void *pvParameters);
-bool storeData();
+bool storeData(DataPacket data);
+void storeSoilDataRam(SoilPacket data);
 
 void initLogger();
 MissionState getMissionState();
