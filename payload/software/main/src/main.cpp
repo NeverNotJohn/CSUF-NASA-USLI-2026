@@ -12,8 +12,11 @@
 #include "soilsensor.h"
 #include "serialUSLI.h"
 #include "beep.h"
+#include "servocontrol.h"
+#include "flip.h"
 #include "sdfs.h"
 using namespace arduino;
+
 
 /************** TASK HANDLES **************/
 TaskHandle_t blinkyHandle = NULL;
@@ -96,11 +99,22 @@ void mainTask(void *pvParameters)
     digitalWrite(TD3_PIN, 1);
 
     // Post flight
+    // Stand
+    // Drill
+    // Flop
+    // Try to rotate
     // Cool Rover Stuff
+    Serial.println("ROVER ROVER ROVER ROVER ROVER");
     while ((Teensy3Clock.get() - touchDownTime_s) < POST_FLIGHT_TIME_S)
     {
-        // Do Rover Stuff
-        vTaskDelay(pdMS_TO_TICKS(100));
+        standUp();
+        vTaskDelay(pdMS_TO_TICKS(2000));
+        digitalWrite(DRILL_PIN, 1);
+        vTaskDelay(pdMS_TO_TICKS(2000));
+        digitalWrite(DRILL_PIN, 0);
+        vTaskDelay(pdMS_TO_TICKS(500));
+        standDown();
+        vTaskDelay(pdMS_TO_TICKS(2000));
     }
 
     // Change States
@@ -120,25 +134,26 @@ void mainTask(void *pvParameters)
 
 void filterMPUTask(void *pvParameters){
     for(;;) {
-        if(readSoilSensor()) {
-            Serial.println("************** SOIL DATA **************");
-            Serial.print("Soil Humidity (%): ");
-            Serial.println(getSoilHumidity());
-            Serial.print("Soil Temperature (C): ");
-            Serial.println(getSoilTemperature_c());
-            Serial.print("Soil EC (uS/cm): ");
-            Serial.println(getSoilEC_us_cm());
-            Serial.print("Soil pH: ");
-            Serial.println(getSoilpH());
-            Serial.print("Nitrogen (mg/kg): ");
-            Serial.println(getN_mg_kg());
-            Serial.print("Phosphorus (mg/kg): ");
-            Serial.println(getP_mg_kg());
-            Serial.print("Potassium (mg/kg): ");
-            Serial.println(getK_mg_kg());
-        } else {
-            Serial.println("Failed to read soil sensor data.");
-        }
+        updateMPUFilter();
+        // if(readSoilSensor()) {
+        //     Serial.println("************** SOIL DATA **************");
+        //     Serial.print("Soil Humidity (%): ");
+        //     Serial.println(getSoilHumidity());
+        //     Serial.print("Soil Temperature (C): ");
+        //     Serial.println(getSoilTemperature_c());
+        //     Serial.print("Soil EC (uS/cm): ");
+        //     Serial.println(getSoilEC_us_cm());
+        //     Serial.print("Soil pH: ");
+        //     Serial.println(getSoilpH());
+        //     Serial.print("Nitrogen (mg/kg): ");
+        //     Serial.println(getN_mg_kg());
+        //     Serial.print("Phosphorus (mg/kg): ");
+        //     Serial.println(getP_mg_kg());
+        //     Serial.print("Potassium (mg/kg): ");
+        //     Serial.println(getK_mg_kg());
+        // } else {
+        //     Serial.println("Failed to read soil sensor data.");
+        // }
         vTaskDelay(pdMS_TO_TICKS(500));
     }
 }
@@ -153,12 +168,14 @@ void setup()
     pinMode(LED_OUTPUT_PIN, OUTPUT);
     pinMode(TD3_PIN, OUTPUT);
     pinMode(BUZZ_PIN, OUTPUT);
+    pinMode(DRILL_PIN, OUTPUT);
 
     // I/O INIT
     initI2C();
     initUSB();
     initBeep();
     initLogger();
+
     // timeSetup();
 
     // DEVICE INIT

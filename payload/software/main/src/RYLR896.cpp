@@ -11,6 +11,7 @@
 #include "arduino_freertos.h"
 #include "serialUSLI.h"
 #include "beep.h"
+#include "flip.h"
 
 /******** DEFINES ********/
 
@@ -18,8 +19,12 @@ typedef enum
 {
     CMD_OK,
     CMD_CALIBRATE,
+    CMD_SIX_SEVEN,
+    CMD_LEGS_TEST,
+    CMD_DRILL_TEST,
     CMD_ARM
 } RxCommands;
+int servoPins[4] = {0,1,2,3};
 
 /******** EXTERN VARS ********/
 TaskHandle_t rxHandle = NULL;
@@ -88,6 +93,17 @@ uint32_t decodePacket(String line)
         case 'A':
             result = CMD_ARM;
             break;
+        case 'L':
+            result = CMD_LEGS_TEST;
+            break;
+        case 'D':
+            result = CMD_DRILL_TEST;
+            break;
+        case '6':
+            result = CMD_SIX_SEVEN;
+            break;
+        
+        
     }
     return result;
 }
@@ -129,7 +145,8 @@ void rxTask(void *pvParameters)
                     beep(3, 100, 50);
                     break;
                 case CMD_ARM:
-                    Serial.println("Arming!");
+                    Serial.println("Arming! Watch yo fingers.");
+                    initLegs(servoPins);
                     if (xSemaphoreTake(flagMutex, portMAX_DELAY) == pdTRUE)
                     {
                         armedFlag = 1;
@@ -137,6 +154,31 @@ void rxTask(void *pvParameters)
                     }
                     beep(1, 3000, 0);
                     
+                    break;
+                case CMD_LEGS_TEST:
+                    if(!checkArmFlag()) {
+                        Serial.println("Payload is not armed!");
+                        break;
+                    }
+                    Serial.println("Testing legs! Flipping up.");
+                    standUp();
+                    vTaskDelay(pdMS_TO_TICKS(5000));
+                    Serial.println("Flipping down.");
+                    standDown();
+                    break;
+                case CMD_DRILL_TEST:
+                    // drill pin 8
+                    Serial.println("Testing drill!");
+                    digitalWrite(DRILL_PIN,1);
+                    vTaskDelay(pdMS_TO_TICKS(5000));
+                    digitalWrite(DRILL_PIN,0);
+                    break;
+                case CMD_SIX_SEVEN:
+                    if(!checkArmFlag()) {
+                        Serial.println("Payload is not armed!");
+                        break;
+                    }
+                    Serial.println("67676767");
                     break;
             }
 

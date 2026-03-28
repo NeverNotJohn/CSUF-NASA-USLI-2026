@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 import csv
 import os
 # ===== Globals =====
-PORT = "/dev/ttyACM2"
+PORT = "/dev/ttyACM0"
 BAUD = 9600
 RETRY_SEC = 2
 sm = input.SerialManager(PORT, BAUD)
@@ -155,6 +155,15 @@ def command(cmd):
     if (cmd == "CALIBRATE"):
         logText = "CALIBRATE"
         rylrCmd = "C"
+    if (cmd == "LEGS_TEST"):
+            logText = "LEGS_TEST"
+            rylrCmd = "LT"
+    if (cmd == "DRILL_TEST"):
+            logText = "DRILL_TEST"
+            rylrCmd = "DT"
+    if (cmd == "SIX_SEVEN"):
+            logText = "SIX_SEVEN"
+            rylrCmd = "67"
 
     log(logText)        # Log on Console
     sm.send(rylrCmd)    # Send to RYLR896
@@ -162,6 +171,9 @@ def command(cmd):
 tk.Button(top_right, text="[ ARM ]", command=lambda: command("ARM"), **btn_style).grid(row=0, column=0, sticky="ew", pady=5)
 tk.Button(top_right, text="[ CALIBRATE ]", command=lambda: command("CALIBRATE"), **btn_style).grid(row=1, column=0, sticky="ew", pady=5)
 tk.Button(top_right, text="[ HEHE ]", command=lambda: command("SHUTDOWN"), **btn_style).grid(row=2, column=0, sticky="ew", pady=5)
+tk.Button(top_right, text="[ TEST LEGS ]", command=lambda: command("LEGS_TEST"), **btn_style).grid(row=3, column=0, sticky="ew", pady=5)
+tk.Button(top_right, text="[ TEST DRILL ]", command=lambda: command("DRILL_TEST"), **btn_style).grid(row=4, column=0, sticky="ew", pady=5)
+tk.Button(top_right, text="[ 67 ]", command=lambda: command("SIX_SEVEN"), **btn_style).grid(row=5, column=0, sticky="ew", pady=5)
 
 # ===== Bottom Left (Console) =====
 console = tk.Text(main, bg=BG, fg=FG, font=FONT_TEXT,

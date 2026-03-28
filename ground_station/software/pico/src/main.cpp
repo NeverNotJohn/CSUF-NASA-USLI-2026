@@ -74,6 +74,21 @@ void loop() {
             //Serial.println("Sending Arm CMD");
             txRYLR896("A");
         }
+        if (line == "DT")
+        {
+            //Serial.println("Sending Arm CMD");
+            txRYLR896("D");
+        }
+        if (line == "67")
+        {
+            //Serial.println("Sending Arm CMD");
+            txRYLR896("6");
+        }
+        if (line == "LT")
+        {
+            //Serial.println("Sending Arm CMD");
+            txRYLR896("L");
+        }
         if (line == "F")
         {
             sendCommand("AT+BAND=901000000");

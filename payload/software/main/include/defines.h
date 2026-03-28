@@ -13,7 +13,7 @@
 #define TRIGGER_FT          5       // OFFICIAL: 30
 
 // Inflight
-#define FLIGHT_TIMEOUT_S    900
+#define FLIGHT_TIMEOUT_S    60 // OFFICIAL 9000
 #define GROUND_COUNTER_MAX  250
 
 // Postflight
@@ -24,12 +24,12 @@
 #define TD3_PIN             23
 #define BUZZ_PIN            33 
 #define LED_INTERNAL_PIN    13
+#define DRILL_PIN           8
 
 /************** SETTINGS **************/
 #define USB_BAUD_RATE       9600
 #define DATA_LOG_SIZE       10416
 #define LOGGER_PERIOD_MS    500
-
 // typedefs & structs
 
 typedef struct {
