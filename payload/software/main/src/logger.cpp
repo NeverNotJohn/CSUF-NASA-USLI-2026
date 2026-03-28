@@ -19,6 +19,7 @@
 /************** GLOBAL VARS **************/
 TaskHandle_t loggerHandle = NULL;
 DMAMEM DataPacketLog dataLog;
+DMAMEM SoilPacketLog soilLog;
 
 
 /************** STATIC VARS **************/
@@ -33,6 +34,15 @@ void storeDataRam(DataPacket data)
     int i = dataLog.size;
     dataLog.data[i] = data;
     dataLog.size = dataLog.size + 1;
+}
+
+void storeSoilDataRam(SoilPacket data)
+{
+    if (soilLog.size >= SOIL_LOG_SIZE) return;
+
+    int i = soilLog.size;
+    soilLog.data[i] = data;
+    soilLog.size = soilLog.size + 1;
 }
 
 void transmitPacket(const DataPacket& data)
@@ -67,6 +77,7 @@ void loggerTask(void *pvParameters)
     // Init Vars
     DataPacket currentData;
     dataLog.size = 0;
+    soilLog.size = 0;
     TickType_t xLastWakeTime = xTaskGetTickCount();
 
     // Sensor Data

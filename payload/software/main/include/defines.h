@@ -29,6 +29,7 @@
 /************** SETTINGS **************/
 #define USB_BAUD_RATE       9600
 #define DATA_LOG_SIZE       10416
+#define SOIL_LOG_SIZE       2604
 #define LOGGER_PERIOD_MS    500
 // typedefs & structs
 
@@ -47,9 +48,23 @@ typedef struct {
 } DataPacket;
 
 typedef struct {
+    uint16_t n;
+    uint8_t hour;
+    uint8_t min;
+    uint8_t sec;
+    float pH;
+    float EC;
+} SoilPacket;
+
+typedef struct {
     DataPacket data[DATA_LOG_SIZE];
     int size;
 } DataPacketLog;
+
+typedef struct {
+    SoilPacket data[SOIL_LOG_SIZE];
+    int size;
+} SoilPacketLog;
 
 // typedef struct {
 //     double x;

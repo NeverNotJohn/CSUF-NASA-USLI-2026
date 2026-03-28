@@ -11,6 +11,8 @@
 /************** EXTERNAL FUNCTIONS **************/
 
 void createFile(String filePath);
+void createSoilFile(String filePath);
 bool writeData(String filePath, DataPacketLog& dataArray);
+bool writeSoilData(String filePath,  SoilPacketLog& dataArray);
 
 #endif // SDFS_H
