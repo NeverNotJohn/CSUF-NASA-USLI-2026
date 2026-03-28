@@ -8,7 +8,7 @@
 #define NEO6M_H
 
 /************** DEFINES **************/
-#define NEO6M_SERIAL        Serial2
+#define NEO6M_SERIAL        Serial8
 #define NEO6M_BAUD_RATE     9600
 
 /************** EXTERNAL FUNCTIONS **************/
