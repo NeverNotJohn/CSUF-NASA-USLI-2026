@@ -33,6 +33,8 @@ TaskHandle_t rxHandle = NULL;
 SemaphoreHandle_t rylr896Mutex;
 SemaphoreHandle_t flagMutex;
 int armedFlag = 0;
+int legsTestFlag = 0;
+int drillTestFlag = 0;
 
 /******** STATIC FUNCTIONS ********/
 // 1 = success, 0 = failure
@@ -155,23 +157,28 @@ void rxTask(void *pvParameters)
                     beep(1, 3000, 0);
                     
                     break;
-                case CMD_LEGS_TEST:
-                    if(!checkArmFlag()) {
-                        Serial.println("Payload is not armed!");
-                        break;
-                    }
-                    Serial.println("Testing legs! Flipping up.");
-                    standUp();
-                    vTaskDelay(pdMS_TO_TICKS(5000));
-                    Serial.println("Flipping down.");
-                    standDown();
-                    break;
+               // In rxTask, toggle on CMD_DRILL_TEST:
                 case CMD_DRILL_TEST:
-                    // drill pin 8
-                    Serial.println("Testing drill!");
-                    digitalWrite(DRILL_PIN,1);
-                    vTaskDelay(pdMS_TO_TICKS(5000));
-                    digitalWrite(DRILL_PIN,0);
+                    if (xSemaphoreTake(flagMutex, portMAX_DELAY) == pdTRUE)
+                    {
+                        drillTestFlag ^= 1;   // xor toggle
+                        xSemaphoreGive(flagMutex);
+                    }
+                    digitalWrite(DRILL_PIN, drillTestFlag);
+                    break;
+
+                case CMD_LEGS_TEST:
+                    if (!checkArmFlag()) break;
+                    if (xSemaphoreTake(flagMutex, portMAX_DELAY) == pdTRUE)
+                    {
+                        legsTestFlag ^= 1; 
+                        xSemaphoreGive(flagMutex);
+                    }
+
+                    if (legsTestFlag)
+                        standUp(); 
+                    else
+                        standDown(); 
                     break;
                 case CMD_SIX_SEVEN:
                     if(!checkArmFlag()) {

@@ -10,13 +10,11 @@
 #include <time.h>
 #include "timeUSLI.h"
 #include "soilsensor.h"
+#include "flip.h"
 #include "serialUSLI.h"
 #include "beep.h"
-#include "servocontrol.h"
-#include "flip.h"
 #include "sdfs.h"
 using namespace arduino;
-
 
 /************** TASK HANDLES **************/
 TaskHandle_t blinkyHandle = NULL;
@@ -47,11 +45,15 @@ void mainTask(void *pvParameters)
     setMissionState(PRE_FLIGHT);
     int preFlightCounter = 0;
 
-    char filePath[256] = "2025-12-7_12-11-10_telemetry.csv";
-    snprintf(filePath, sizeof(filePath), "%04d-%02d-%02d_%02d-%02d-%02d_telemetry.csv", 
+    char telemetryFilePath[256] = "2025-12-7_12-11-10_telemetry.csv";
+    snprintf(telemetryFilePath, sizeof(telemetryFilePath), "%04d-%02d-%02d_%02d-%02d-%02d_telemetry.csv", 
             year(), month(), day(), hour(), minute(), second());
+    createFile(telemetryFilePath);
 
-    createFile(filePath);
+    char soilFilePath[256] = "2025-12-7_12-11-10_soil.csv";
+    snprintf(soilFilePath, sizeof(soilFilePath), "%04d-%02d-%02d_%02d-%02d-%02d_soil.csv", 
+            year(), month(), day(), hour(), minute(), second());
+    createSoilFile(soilFilePath);
 
     // Preflight
     while (preFlightCounter < 30 || !(checkArmFlag()))
@@ -99,22 +101,35 @@ void mainTask(void *pvParameters)
     digitalWrite(TD3_PIN, 1);
 
     // Post flight
-    // Stand
-    // Drill
-    // Flop
-    // Try to rotate
     // Cool Rover Stuff
-    Serial.println("ROVER ROVER ROVER ROVER ROVER");
+    int soilCounter = 0;
     while ((Teensy3Clock.get() - touchDownTime_s) < POST_FLIGHT_TIME_S)
     {
+        // Do Rover Stuff
+
+        // Stand
         standUp();
-        vTaskDelay(pdMS_TO_TICKS(2000));
-        digitalWrite(DRILL_PIN, 1);
-        vTaskDelay(pdMS_TO_TICKS(2000));
-        digitalWrite(DRILL_PIN, 0);
-        vTaskDelay(pdMS_TO_TICKS(500));
+        vTaskDelay(pdMS_TO_TICKS(10000));
+
+        // Drill
+        digitalWrite(DRILL_PIN,1);
+        vTaskDelay(pdMS_TO_TICKS(10000));
+        digitalWrite(DRILL_PIN,0);
+
+        // Sample
+        SoilPacket SoilPacket;
+        SoilPacket.n = soilCounter++;
+        SoilPacket.hour = hour();
+        SoilPacket.min = minute();
+        SoilPacket.sec = second();
+        readSoilSensor();
+        SoilPacket.pH = getSoilpH();
+        SoilPacket.EC = getSoilEC_us_cm();
+        storeSoilDataRam(SoilPacket);
+        vTaskDelay(pdMS_TO_TICKS(100));
+
         standDown();
-        vTaskDelay(pdMS_TO_TICKS(2000));
+        
     }
 
     // Change States
@@ -125,7 +140,8 @@ void mainTask(void *pvParameters)
     beep(3, 1000, 500);
 
     // Store Data Onto SD Card
-    writeData(filePath, dataLog);
+    writeData(telemetryFilePath, dataLog);
+    writeSoilData(soilFilePath, soilLog);
 
     // End of Mission
     for(;;) {}
@@ -135,25 +151,6 @@ void mainTask(void *pvParameters)
 void filterMPUTask(void *pvParameters){
     for(;;) {
         updateMPUFilter();
-        // if(readSoilSensor()) {
-        //     Serial.println("************** SOIL DATA **************");
-        //     Serial.print("Soil Humidity (%): ");
-        //     Serial.println(getSoilHumidity());
-        //     Serial.print("Soil Temperature (C): ");
-        //     Serial.println(getSoilTemperature_c());
-        //     Serial.print("Soil EC (uS/cm): ");
-        //     Serial.println(getSoilEC_us_cm());
-        //     Serial.print("Soil pH: ");
-        //     Serial.println(getSoilpH());
-        //     Serial.print("Nitrogen (mg/kg): ");
-        //     Serial.println(getN_mg_kg());
-        //     Serial.print("Phosphorus (mg/kg): ");
-        //     Serial.println(getP_mg_kg());
-        //     Serial.print("Potassium (mg/kg): ");
-        //     Serial.println(getK_mg_kg());
-        // } else {
-        //     Serial.println("Failed to read soil sensor data.");
-        // }
         vTaskDelay(pdMS_TO_TICKS(500));
     }
 }
@@ -168,15 +165,13 @@ void setup()
     pinMode(LED_OUTPUT_PIN, OUTPUT);
     pinMode(TD3_PIN, OUTPUT);
     pinMode(BUZZ_PIN, OUTPUT);
-    pinMode(DRILL_PIN, OUTPUT);
 
     // I/O INIT
     initI2C();
     initUSB();
     initBeep();
     initLogger();
-
-    // timeSetup();
+    //timeSetup();
 
     // DEVICE INIT
     initBMP();
@@ -199,4 +194,3 @@ void loop()
     vTaskStartScheduler();
     printf("Wtf just happened");                                    // Should never Happen
 }
-
