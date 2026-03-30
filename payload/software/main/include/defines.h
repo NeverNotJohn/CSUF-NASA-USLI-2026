@@ -13,7 +13,7 @@
 #define TRIGGER_FT          5       // OFFICIAL: 30
 
 // Inflight
-#define FLIGHT_TIMEOUT_S    60 // OFFICIAL 9000
+#define FLIGHT_TIMEOUT_S    900      // OFFICIAL 900
 #define GROUND_COUNTER_MAX  250
 
 // Postflight
