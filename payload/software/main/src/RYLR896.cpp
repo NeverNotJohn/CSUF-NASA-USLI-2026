@@ -9,6 +9,7 @@
 #include "defines.h"
 #include <stdint.h>
 #include "arduino_freertos.h"
+#include "bts7960.h"
 #include "serialUSLI.h"
 #include "beep.h"
 #include "flip.h"
@@ -157,15 +158,32 @@ void rxTask(void *pvParameters)
                     beep(1, 3000, 0);
                     
                     break;
-               // In rxTask, toggle on CMD_DRILL_TEST:
-                case CMD_DRILL_TEST:
-                    if (xSemaphoreTake(flagMutex, portMAX_DELAY) == pdTRUE)
-                    {
-                        drillTestFlag ^= 1;   // xor toggle
-                        xSemaphoreGive(flagMutex);
-                    }
-                    digitalWrite(DRILL_PIN, drillTestFlag);
-                    break;
+            case CMD_DRILL_TEST:
+                if (!checkArmFlag()) break;
+                if (xSemaphoreTake(flagMutex, portMAX_DELAY) == pdTRUE)
+                {
+                    drillTestFlag++;
+                    if (drillTestFlag > 2) drillTestFlag = 0;
+                    xSemaphoreGive(flagMutex);
+                }
+
+                switch (drillTestFlag)
+                {
+                    case 1:
+                        Serial.println("Lowering drill...");
+                        BTS7960Forward();
+                        break;
+                    case 2:
+                        Serial.println("Starting drill rotation...");
+                        BTS7960Stop();
+                        digitalWrite(DRILL_PIN,1);
+                        break;
+                    case 0:
+                        digitalWrite(DRILL_PIN,0);
+                        BTS7960Backward();
+                        break;
+                }
+                break;
 
                 case CMD_LEGS_TEST:
                     if (!checkArmFlag()) break;
@@ -175,10 +193,13 @@ void rxTask(void *pvParameters)
                         xSemaphoreGive(flagMutex);
                     }
 
-                    if (legsTestFlag)
-                        standUp(); 
+                    if (legsTestFlag){
+                        standUp();
+                    }
                     else
-                        standDown(); 
+                    {
+                        standDown();
+                    } 
                     break;
                 case CMD_SIX_SEVEN:
                     if(!checkArmFlag()) {
