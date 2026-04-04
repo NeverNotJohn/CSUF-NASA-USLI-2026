@@ -31,6 +31,8 @@
 #define DATA_LOG_SIZE       10416
 #define SOIL_LOG_SIZE       2604
 #define LOGGER_PERIOD_MS    500
+#define ANALOG_READ_RES     12
+
 // typedefs & structs
 
 typedef struct {

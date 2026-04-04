@@ -14,6 +14,7 @@
 #include "serialUSLI.h"
 #include "beep.h"
 #include "sdfs.h"
+#include "chassis.h"
 using namespace arduino;
 
 /************** TASK HANDLES **************/
@@ -179,13 +180,16 @@ void setup()
     setSyncProvider(getTeensyTime);
     initMPU6050();
     initSoilSensor();
+    analogReadResolution(ANALOG_READ_RES);
+    initChassis();
+    
     Serial.printf("Init Finished! Time: %04d-%02d-%02d %02d:%02d:%02d\n",
                   year(), month(), day(), hour(), minute(), second());
 
     // TASK CREATION
     xTaskCreate(blinkyTask, "Blinky Task", 4096, NULL, 1, &blinkyHandle);
     xTaskCreate(filterMPUTask, "MPU Task", 4096, NULL, 1, &filterMPUHandle);
-    xTaskCreate(mainTask, "Main Task", 4096, NULL, 1, &mainHandle);
+    xTaskCreate(mainTask, "Main Task", 8192, NULL, 1, &mainHandle);
     xTaskCreate(loggerTask, "Debug Task", 4096, NULL, 1, &loggerHandle);
 }
 

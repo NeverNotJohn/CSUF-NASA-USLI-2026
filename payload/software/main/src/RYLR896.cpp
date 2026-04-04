@@ -143,7 +143,7 @@ void rxTask(void *pvParameters)
             switch (cmd)
             {
                 case CMD_CALIBRATE:
-                    Serial.println("Calibrating!");
+                    Serial.println("Calibrating BMP280!");
                     calibrateBMP();
                     beep(3, 100, 50);
                     break;
