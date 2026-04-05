@@ -109,7 +109,7 @@ void mainTask(void *pvParameters)
 
         // Stand
         standUp();
-        vTaskDelay(pdMS_TO_TICKS(10000));
+        vTaskDelay(pdMS_TO_TICKS(2500));
 
         // Drill
         digitalWrite(DRILL_PIN,1);
@@ -117,15 +117,15 @@ void mainTask(void *pvParameters)
         digitalWrite(DRILL_PIN,0);
 
         // Sample
-        SoilPacket SoilPacket;
-        SoilPacket.n = soilCounter++;
-        SoilPacket.hour = hour();
-        SoilPacket.min = minute();
-        SoilPacket.sec = second();
-        readSoilSensor();
-        SoilPacket.pH = getSoilpH();
-        SoilPacket.EC = getSoilEC_us_cm();
-        storeSoilDataRam(SoilPacket);
+        // SoilPacket SoilPacket;
+        // SoilPacket.n = soilCounter++;
+        // SoilPacket.hour = hour();
+        // SoilPacket.min = minute();
+        // SoilPacket.sec = second();
+        // readSoilSensor();
+        // SoilPacket.pH = getSoilpH();
+        // SoilPacket.EC = getSoilEC_us_cm();
+        // storeSoilDataRam(SoilPacket);
         vTaskDelay(pdMS_TO_TICKS(100));
 
         standDown();

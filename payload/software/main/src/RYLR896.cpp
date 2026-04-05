@@ -157,7 +157,7 @@ void rxTask(void *pvParameters)
                     beep(1, 3000, 0);
                     
                     break;
-               // In rxTask, toggle on CMD_DRILL_TEST:
+               // toggle on CMD_DRILL_TEST:
                 case CMD_DRILL_TEST:
                     if (xSemaphoreTake(flagMutex, portMAX_DELAY) == pdTRUE)
                     {

@@ -9,7 +9,7 @@
 #include "flip.h"
 /************** STATIC VARS **************/
 ServoControl servos[NUM_SERVOS] = {};
-#define SERVO_SPEED_MS 1000
+#define SERVO_SPEED_MS 500
 /************** FUNCTIONS **************/
 
 void initLegs(int servoPins[NUM_SERVOS])
@@ -20,7 +20,6 @@ void initLegs(int servoPins[NUM_SERVOS])
       servos[i] = servo;
       servos[i].init(servoPins[i], 175); // attach servo to pin with 175 deg start angle
     }
-    delay(500);
     Serial.println("legs initialized!");    
     
 }
@@ -52,17 +51,16 @@ void standDown()
             servos[i].prepareAngle(175, SERVO_SPEED_MS);
     }
     synchronizeAllServosStartAndWaitForAllServosToStop();
-    delay(500);
-    for (int i = 0; i < NUM_SERVOS/2; i++) {
-        servos[i].prepareAngle(0, SERVO_SPEED_MS);
-        servos[i+2].prepareAngle(90, SERVO_SPEED_MS);
+    // for (int i = 0; i < NUM_SERVOS/2; i++) {
+    //     servos[i].prepareAngle(0, SERVO_SPEED_MS);
+    //     servos[i+2].prepareAngle(90, SERVO_SPEED_MS);
 
-    }
-    synchronizeAllServosStartAndWaitForAllServosToStop();
-    delay(500);
-    for (int i = 0; i < NUM_SERVOS; i++) {
-        servos[i].prepareAngle(175, SERVO_SPEED_MS);
-    }
-    synchronizeAllServosStartAndWaitForAllServosToStop();
+    // }
+    // synchronizeAllServosStartAndWaitForAllServosToStop();
+    // delay(500);
+    // for (int i = 0; i < NUM_SERVOS; i++) {
+    //     servos[i].prepareAngle(175, SERVO_SPEED_MS);
+    // }
+    // synchronizeAllServosStartAndWaitForAllServosToStop();
 
 }
