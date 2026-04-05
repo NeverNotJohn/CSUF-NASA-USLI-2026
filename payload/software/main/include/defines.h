@@ -24,7 +24,7 @@
 #define TD3_PIN             23
 #define BUZZ_PIN            33 
 #define LED_INTERNAL_PIN    13
-#define DRILL_PIN           8
+#define DRILL_PIN           9
 
 /************** SETTINGS **************/
 #define USB_BAUD_RATE       9600
