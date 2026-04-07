@@ -12,7 +12,7 @@ PORT = "/dev/ttyACM0"
 BAUD = 9600
 RETRY_SEC = 2
 sm = input.SerialManager(PORT, BAUD)
-CSV_FILE = "flight_data.csv"
+CSV_FILE = datetime.now().strftime("%Y-%m-%d_%H:%M:%S_") + "flight_data.csv"
 CSV_HEADERS = ["n", "hour", "minute", "second", "altitude", "lng", "lat", "roll", "pitch", "yaw", "mission_state"]
 # ===== Funcs =====
 def log(msg):
@@ -327,24 +327,14 @@ def update_data():
     except:
         rcvFlag = False
     
-    # Add to console
-    if (data and rcvFlag):
-        consoleAppend("Packet Received")
-    if (data and rcvFlag):
-        update_csv(input.parse_payload(data))
-    # Update Status
-    if (data and rcvFlag):
-        updateStatus(input.parse_payload(data))
-    
-    # Update Plots
-    if (data and rcvFlag):
-        temp = input.parse_payload(data)
-        if (temp):
-            updateAlt(temp["altitude"], temp["n"])
-    
-    # Debug
-    if (data and rcvFlag):
-        print(input.parse_payload(data))
+    if data and rcvFlag:
+        parsed = input.parse_payload(data)
+        if parsed:
+            consoleAppend("Packet Received")
+            update_csv(parsed)
+            updateStatus(parsed)
+            updateAlt(parsed["altitude"], parsed["n"])
+            print(parsed)
     
     root.after(450, update_data)
 

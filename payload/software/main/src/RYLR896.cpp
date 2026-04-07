@@ -186,6 +186,8 @@ void rxTask(void *pvParameters)
                         break;
                     }
                     Serial.println("67676767");
+                
+
                     break;
             }
 

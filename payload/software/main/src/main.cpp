@@ -106,16 +106,16 @@ void mainTask(void *pvParameters)
     while ((Teensy3Clock.get() - touchDownTime_s) < POST_FLIGHT_TIME_S)
     {
         // Do Rover Stuff
-
+        if(soilCounter >= 3) break;
         // Stand
         standUp();
         vTaskDelay(pdMS_TO_TICKS(2500));
 
         // Drill
         digitalWrite(DRILL_PIN,1);
-        vTaskDelay(pdMS_TO_TICKS(10000));
+        vTaskDelay(pdMS_TO_TICKS(3000));
         digitalWrite(DRILL_PIN,0);
-
+        soilCounter++;
         // Sample
         // SoilPacket SoilPacket;
         // SoilPacket.n = soilCounter++;
@@ -128,7 +128,7 @@ void mainTask(void *pvParameters)
         // storeSoilDataRam(SoilPacket);
         vTaskDelay(pdMS_TO_TICKS(100));
 
-        standDown();
+        // standDown();
         
     }
 
