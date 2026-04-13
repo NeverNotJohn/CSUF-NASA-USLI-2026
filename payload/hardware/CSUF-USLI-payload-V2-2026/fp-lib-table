@@ -1,0 +1,6 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "Phoenix_Screw_Connectors")(type "KiCad")(uri "${KIPRJMOD}/footprints/Phoenix_Screw_Connectors.pretty")(options "")(descr ""))
+  (lib (name "modbus_to_uart")(type "KiCad")(uri "${KIPRJMOD}/footprints/modbus_to_uart.pretty")(options "")(descr ""))
+  (lib (name "DEV-16771")(type "KiCad")(uri "${KIPRJMOD}/footprints/DEV-16771.pretty")(options "")(descr ""))
+)
