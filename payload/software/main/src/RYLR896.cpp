@@ -181,10 +181,16 @@ void rxTask(void *pvParameters)
                         standDown(); 
                     break;
                 case CMD_SIX_SEVEN:
-                    if(!checkArmFlag()) {
-                        Serial.println("Payload is not armed!");
-                        break;
-                    }
+                    // if(!checkArmFlag()) {
+                    //     Serial.println("Payload is not armed!");
+                    //     break;
+                    // }
+                    digitalWrite(CHASSIS_PIN_1, 0);
+                    vTaskDelay(pdMS_TO_TICKS(50));
+                    digitalWrite(CHASSIS_PIN_0, 1);
+                    vTaskDelay(pdMS_TO_TICKS(500));
+                    digitalWrite(CHASSIS_PIN_1, 0);
+                    digitalWrite(CHASSIS_PIN_0, 0);
                     Serial.println("67676767");
                 
 

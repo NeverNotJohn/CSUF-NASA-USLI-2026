@@ -10,7 +10,7 @@
 #define ANNOY_CYAN          1
  
 // Preflight
-#define TRIGGER_FT          30       // OFFICIAL: 30
+#define TRIGGER_FT          5       // OFFICIAL: 30
 
 // Inflight
 #define FLIGHT_TIMEOUT_S    900      // OFFICIAL 900
@@ -24,7 +24,9 @@
 #define TD3_PIN             23
 #define BUZZ_PIN            33 
 #define LED_INTERNAL_PIN    13
-#define DRILL_PIN           9
+#define DRILL_PIN           8
+#define CHASSIS_PIN_0       4
+#define CHASSIS_PIN_1       5
 
 /************** SETTINGS **************/
 #define USB_BAUD_RATE       9600

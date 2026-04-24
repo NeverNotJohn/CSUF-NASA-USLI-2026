@@ -9,7 +9,7 @@
 #include "RYLR896.h"
 #include "bmp280.h"
 #include "neo6m.h"
-#include "mpu6050.h"
+// #include "mpu6050.h"
 #include "defines.h"
 #include "sdfs.h"
 #include "timeUSLI.h"
@@ -104,9 +104,9 @@ void loggerTask(void *pvParameters)
         currentData.lat = latitude;
        
 
-        currentData.roll_deg =  getRoll();                                // Insert MPU6050 Data
-        currentData.pitch_deg = getPitch();
-        currentData.yaw_deg = getYaw();
+        currentData.roll_deg =  0;                                // Insert MPU6050 Data
+        currentData.pitch_deg = 0;
+        currentData.yaw_deg = 0;
 
         currentData.missionState = (uint8_t)getMissionState();
         

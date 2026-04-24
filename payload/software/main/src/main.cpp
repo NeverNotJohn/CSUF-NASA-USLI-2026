@@ -1,7 +1,7 @@
 #include "arduino_freertos.h"
 #include "defines.h"
 #include "motor.h"
-#include "mpu6050.h"
+// #include "mpu6050.h"
 #include "bmp280.h"
 #include "RYLR896.h"
 #include "i2c.h"
@@ -111,6 +111,18 @@ void mainTask(void *pvParameters)
         standUp();
         vTaskDelay(pdMS_TO_TICKS(2500));
 
+        // FOWARDS
+        digitalWrite(CHASSIS_PIN_0, 0);
+        vTaskDelay(pdMS_TO_TICKS(50));
+        digitalWrite(CHASSIS_PIN_1, 1);
+        vTaskDelay(pdMS_TO_TICKS(6000));
+        // BACKWARDS
+        // digitalWrite(CHASSIS_PIN_1, 0);
+        // vTaskDelay(pdMS_TO_TICKS(50));
+        // digitalWrite(CHASSIS_PIN_0, 1);
+        // vTaskDelay(pdMS_TO_TICKS(4000));
+        
+
         // Drill
         digitalWrite(DRILL_PIN,1);
         vTaskDelay(pdMS_TO_TICKS(3000));
@@ -125,8 +137,11 @@ void mainTask(void *pvParameters)
         // readSoilSensor();
         // SoilPacket.pH = getSoilpH();
         // SoilPacket.EC = getSoilEC_us_cm();
+        // Serial.printf("Soil Sample %d: %02d:%02d:%02d, pH: %.2f, EC: %.2f\n", 
+        //               SoilPacket.n, SoilPacket.hour, SoilPacket.min, SoilPacket.sec, 
+        //               SoilPacket.pH, SoilPacket.EC);
         // storeSoilDataRam(SoilPacket);
-        vTaskDelay(pdMS_TO_TICKS(100));
+        // vTaskDelay(pdMS_TO_TICKS(100));
 
         // standDown();
         
@@ -150,8 +165,28 @@ void mainTask(void *pvParameters)
 
 void filterMPUTask(void *pvParameters){
     for(;;) {
-        updateMPUFilter();
-        vTaskDelay(pdMS_TO_TICKS(500));
+        Serial.println("Soil Sensor Reading:");
+        // updateMPUFilter();
+        // digitalWrite(CHASSIS_PIN_1, 0);
+        // vTaskDelay(pdMS_TO_TICKS(50));
+        // digitalWrite(CHASSIS_PIN_0, 1);
+        // vTaskDelay(pdMS_TO_TICKS(5000));
+        // digitalWrite(CHASSIS_PIN_0, 0);
+        // vTaskDelay(pdMS_TO_TICKS(50));
+        // digitalWrite(CHASSIS_PIN_1, 1);
+        // vTaskDelay(pdMS_TO_TICKS(5000));
+
+        SoilPacket SoilPacket;
+        SoilPacket.hour = hour();
+        SoilPacket.min = minute();
+        SoilPacket.sec = second();
+        readSoilSensor();
+        SoilPacket.pH = getSoilpH();
+        SoilPacket.EC = getSoilEC_us_cm();
+        Serial.printf("Soil Sample %d: %02d:%02d:%02d, pH: %.2f, EC: %.2f\n", 
+                      SoilPacket.n, SoilPacket.hour, SoilPacket.min, SoilPacket.sec, 
+                      SoilPacket.pH, SoilPacket.EC);
+        vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
 
@@ -165,19 +200,22 @@ void setup()
     pinMode(LED_OUTPUT_PIN, OUTPUT);
     pinMode(TD3_PIN, OUTPUT);
     pinMode(BUZZ_PIN, OUTPUT);
+    pinMode(CHASSIS_PIN_0, OUTPUT);
+    pinMode(CHASSIS_PIN_1, OUTPUT);
+    pinMode(DRILL_PIN, OUTPUT);
 
     // I/O INIT
     initI2C();
     initUSB();
     initBeep();
     initLogger();
-    //timeSetup();
+    // timeSetup();
 
     // DEVICE INIT
     initBMP();
     initNEO6M();
     setSyncProvider(getTeensyTime);
-    initMPU6050();
+    // initMPU6050();
     initSoilSensor();
     Serial.printf("Init Finished! Time: %04d-%02d-%02d %02d:%02d:%02d\n",
                   year(), month(), day(), hour(), minute(), second());
