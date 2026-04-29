@@ -15,6 +15,6 @@
 void initLegs(int servoPins[NUM_SERVOS]);
 void standUp();
 void standDown();
-void acuateLeg(int servoIndex, int targetAngle, int time_ms);
+void sixtySeven();
 
 #endif // FLIP_H

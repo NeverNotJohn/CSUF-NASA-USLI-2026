@@ -24,13 +24,6 @@ void initLegs(int servoPins[NUM_SERVOS])
     
 }
 
-void acuateLeg(int servoIndex, int targetAngle, int time_ms)
-{
-
-    servos[servoIndex].turnToAngle(targetAngle, time_ms);
-
-}
-
 
 void standUp()
 {
@@ -63,4 +56,18 @@ void standDown()
     // }
     // synchronizeAllServosStartAndWaitForAllServosToStop();
 
+}
+
+void sixtySeven(){
+    for (int i = 0; i < 2; i++) {
+        servos[i].prepareAngle(90, SERVO_SPEED_MS);
+        servos[i+1].prepareAngle(150, SERVO_SPEED_MS);
+    }
+    synchronizeAllServosStartAndWaitForAllServosToStop();
+    delay(500);
+    for (int i = 0; i < 2; i++) {
+        servos[i+1].prepareAngle(90, SERVO_SPEED_MS);
+        servos[i].prepareAngle(150, SERVO_SPEED_MS);
+    }
+    synchronizeAllServosStartAndWaitForAllServosToStop();
 }
